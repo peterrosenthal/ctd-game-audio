@@ -1,6 +1,12 @@
 // set up the Pts namespace to make our coding life easier
 Pts.namespace(window);
 
+const hoverOverPlayer = new Tone.Player('../audio/hover-over.wav').toDestination();
+const goodClickPlayer = new Tone.Player('../audio/good-click.wav').toDestination();
+const badClickPlayer = new Tone.Player('../audio/bad-click.wav').toDestination();
+const tileClearedPlayer = new Tone.Player('../audio/tile-cleared.wav').toDestination();
+const gameFinishedPlayer = new Tone.Player('../audio/game-finished.wav').toDestination();
+
 const colors = ['#46237a', '#3ddc97', '#ff495c'];
 const shapes = ['circle', 'rectangle', 'triangle'];
 let points = 0;
@@ -11,6 +17,41 @@ let selection = {
 };
 let removalEvent = false;
 let activatedStyle = false;
+
+// function playHoverOverSound() plays a little click intended for hovering over a card/tile
+function playHoverOverSound() {
+  hoverOverPlayer.volume.value = Math.random() * 8 - 6.5;
+  hoverOverPlayer.playbackRate = Math.random() * 0.12 + 0.98;
+  hoverOverPlayer.start();
+}
+
+// function playGoodClickSound() plays a nice little click whenever you're clicking on something (and it's not a bad click)
+function playGoodClickSound() {
+  goodClickPlayer.volume.value = Math.random() * 3 - 1.5;
+  goodClickPlayer.playbackRate = Math.random() * 0.6 + 0.99;
+  goodClickPlayer.start();
+}
+
+// function playBadClickSound() plays a not-so-nice twang whenever you're clicking on something and it's not doing the "good" thing (sometimes good strategy might require "bad" clicks)
+function playBadClickSound() {
+  badClickPlayer.volume.value = Math.random() * 3 - 1.5;
+  badClickPlayer.playbackRate = Math.random() * 0.5 + 0.98;
+  badClickPlayer.start();
+}
+
+// function playTileClearedSound() plays a fun little jingle intendid for when a tile is cleared of all its shapes
+function playTileClearedSound() {
+  try {
+    tileClearedPlayer.start();
+  } catch (error) {
+    tileClearedPlayer.restart();
+  }
+}
+
+// function playGameFinishedSound() plays a little jingle intended for when the game finishes
+function playGameFinishedSound() {
+  gameFinishedPlayer.start();
+}
 
 // function boundLastItem(array, lower, upper) will wrap the last item of array around the bounds set by lower and upper
 function boundLastItem(array, lower, upper) {
@@ -39,12 +80,10 @@ function createRand3Order() {
 // function trackLayerWithClassList(el, colorArray, shapeArray) is a little hack I'm doing to use CSS classes to keep track (and store the state in an accessible manner) of the topmost layer of each canvas
 // I wouldn't need to do any of this if I had made my life a little bit easier by programming with an OOP mindset to begin with, but all the Pts.js examples I was reading were so functional and they looked so clean, that I wanted to try and do the same. But a functional-ish coding paradigm is *very* much not my strong suite.
 function trackLayerWithClassList(el, colorArray, shapeArray) {
-  el.classList.remove('color-layer-0');
-  el.classList.remove('color-layer-1');
-  el.classList.remove('color-layer-2');
-  el.classList.remove('shape-layer-0');
-  el.classList.remove('shape-layer-1');
-  el.classList.remove('shape-layer-2');
+  for (let i = 0; i < 3; i++) {
+    el.classList.remove(`color-layer-${i}`);
+    el.classList.remove(`shape-layer-${i}`);
+  }
   if (colorArray.length > 0 && shapeArray.length > 0) {
     el.classList.add(`color-layer-${colorArray[colorArray.length - 1]}`);
     el.classList.add(`shape-layer-${shapeArray[shapeArray.length - 1]}`);
@@ -97,6 +136,9 @@ function drawTile(canvas) {
         layerShapes.pop();
         layerPositions.pop();
         trackLayerWithClassList(canvas, layerColors, layerShapes);
+        if (canvas.className == '') {
+          playTileClearedSound();
+        }
         removalEvent = false;
         potentialFutureRemoval = false;
       }
@@ -133,6 +175,7 @@ function drawTile(canvas) {
     action: (type) => {
       if (type == 'down') {
         if (selection.color == -1 && selection.shape == -1) {
+          playGoodClickSound();
           selection = {
             color: layerColors[layerColors.length - 1],
             shape: layerShapes[layerShapes.length - 1]
@@ -143,7 +186,8 @@ function drawTile(canvas) {
           space.background = '#eaeaea';
         } else if (selection.color == layerColors[layerColors.length - 1]
                 && selection.shape == layerShapes[layerShapes.length - 1]
-                && !potentialFutureRemoval) {
+                && !potentialFutureRemoval && canvas.className != '') {
+          playGoodClickSound();
           points += combo;
           if (combo == 1) {
             removalEvent = true;
@@ -168,7 +212,11 @@ function drawTile(canvas) {
           layerShapes.pop();
           layerPositions.pop();
           trackLayerWithClassList(canvas, layerColors, layerShapes);
+          if (canvas.className == '') {
+            playTileClearedSound();
+          }
         } else {
+          playBadClickSound();
           selection = {
             color: -1,
             shape: -1
@@ -194,9 +242,10 @@ function drawTile(canvas) {
         if (gameWon) {
           score *= 2;
           document.querySelector('header').querySelector('p').innerHTML = `You win! You scored ${points} points!`;
-        }
-        if (!eligibleMoves) {
-          document.querySelector('header').querySelector('p').innerHTML = `Game over! You got ${points} points! Sometimes it's the luck of the draw, sometimes it's how you play your cards. Hit refresh to try again for a higer score!`;
+          playGameFinishedSound();
+        } else if (!eligibleMoves) {
+          document.querySelector('header').querySelector('p').innerHTML = `Game over! You got ${points} points! Sometimes it's the luck of the draw, sometimes it's how you play your cards. Hit refresh to try again for a higher score!`;
+          playGameFinishedSound();
         }
       }
     },
@@ -209,7 +258,11 @@ function drawTile(canvas) {
     }
   });
 
+  // init and play the Pts space
   space.bindMouse().bindTouch().play();
 }
 
-document.querySelectorAll('canvas').forEach(canvas => drawTile(canvas));
+document.querySelectorAll('canvas').forEach((canvas) => {
+  drawTile(canvas);
+  canvas.addEventListener('mouseenter', playHoverOverSound);
+});
