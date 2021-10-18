@@ -24,6 +24,14 @@ There are also a bunch of "settings" that I'd like to include that the player ca
   * A "quantize" button to optionally lock the oscillations of the noodle dudes to a 1/16 or 1/32 or 1/64 (probably customizable) grid.
   * A spatial audio on-off button (spatial audio will not be included in the MVP by default).
 
+#### Technologies
+Since most of the class is using Unity I thought it'd be worth mentioning that I'll be instead using a combination of web technologies because I'm interested in using this project as an opportunity to practice and further develop my skills with them:
+
+ * Typescript
+ * THREE.js
+ * Cannon-es
+ * Tone.js
+
 ## Grading Contract
 What I've learned from working on so many ATLAS projects over the years is that what's most important to me is to have a well documented process log of the project. Something that I can not only show to any potential future employers, but also something that I can look back on to reflect on my own thought process through the project. I find it incredibly helpful to look back on my own thought process in a previous project if I find myself working on anything with any shared aspect. I've  looked back at my own undergraduate capstone project's process log at least 5 times now, not because I even remotely enjoyed reading my own (quite cringey because I never edited it for spelling mistakes or typos) writing, but because reviewing my own though process would make creating something related so much easier. All that is to say that my number one priority for this project to get an A is to have a clear well documented weekly progress log that covers my thought process througout the development of the project. Beyond a great process log, the next important thing to me is meeting the minimum viable product (MVP) for the project on time. I'd love to go beyond just an MVP for this project, I'd love that for all my projects, but I know that it's important for me not to put any pressure on myself to actually do that, and just an MVP is good enough for an A for me. And the third and final thing that I need to do to accomplish an A is to stay exploratory in the sound domain. 3D graphics and games are super fun and super cool to work on, and especially because they're still relatively novel to me as a developer even after several years, it's still really easy to get sucked into being experimental in the 3D graphics domain rather than the sound domain. I need to keep myself in line and not forget that the whole goal of the class is to do something with *sound* not with graphics. So to recap, my grading contract is as follows:
 ### Grade breakdown by letter
