@@ -1,0 +1,26 @@
+{
+  "name": "game-audio-generative-exploration",
+  "version": "1.0.0",
+  "description": "Project 2 for ATLAS Game Audio class",
+  "main": "ts/main.ts",
+  "scripts": {
+    "dev": "webpack --mode=none",
+    "prod": "webpack --mode=production",
+    "serve": "npx http-server"
+  },
+  "author": "Peter Rosenthal",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "@types/three": "^0.133.1",
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/parser": "^5.1.0",
+    "eslint": "^8.0.1",
+    "http-server": "^13.0.2",
+    "three": "^0.133.1",
+    "tone": "^14.7.77",
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.4.4",
+    "webpack": "^5.58.2",
+    "webpack-cli": "^4.9.1"
+  }
+}
