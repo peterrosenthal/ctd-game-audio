@@ -101,12 +101,27 @@ function keyUp(event: KeyboardEvent) {
       break;
   }
 }
+function mouseDown() {
+  if (controls.isLocked === true) {
+    const dir = camera.getWorldDirection(new THREE.Vector3());
+    const theta = Math.asin(dir.dot(new THREE.Vector3(0, 1, 0)));
+    if (theta < -Math.PI / 16) {
+      const dist = 5 * Math.sin(Math.PI / 2 + theta) / (Math.cos(Math.PI / 2 + theta) * camera.position.y);
+      const pos = new THREE.Vector3(dir.x, 0, dir.z)
+        .normalize()
+        .multiplyScalar(dist)
+        .add(new THREE.Vector3(camera.position.x, 0, camera.position.z));
+      cube.position.copy(pos);
+    }
+  }
+}
 
 menu.addEventListener('click', () => { controls.lock(); });
 controls.addEventListener('lock', hideMenu);
 controls.addEventListener('unlock', showMenu);
 document.addEventListener('keydown', keyDown);
 document.addEventListener('keyup', keyUp);
+document.addEventListener('mousedown', mouseDown);
 
 
 scene.add(controls.getObject());
