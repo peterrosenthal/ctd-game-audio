@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
+import BouncyBoi from './BouncyBoi';
 import SETTINGS from './GameSettings';
 
 interface MovementState {
@@ -9,10 +10,16 @@ interface MovementState {
   right: boolean;
 }
 
+interface SelectedObject {
+  object: BouncyBoi;
+  distance: number;
+  angle: number;
+}
+
 export default class PlayerController {
-  scene: THREE.Scene;
-  camera: THREE.PerspectiveCamera;
-  renderer: THREE.WebGLRenderer;
+  private scene: THREE.Scene;
+  private camera: THREE.PerspectiveCamera;
+  private renderer: THREE.WebGLRenderer;
 
   controls!: PointerLockControls;
   state!: MovementState;
@@ -22,38 +29,60 @@ export default class PlayerController {
   menu!: HTMLElement;
   instructions!: HTMLElement;
 
+  dragging: Boolean = false;
+
+  activeObject?: SelectedObject;
+
   constructor(
     scene: THREE.Scene,
     camera: THREE.PerspectiveCamera,
     renderer: THREE.WebGLRenderer) {
+    // assign private members
     this.scene = scene;
     this.camera = camera;
     this.renderer = renderer;
 
+    // bind event functions
+    this.lockControls = this.lockControls.bind(this);
+    this.hideMenu = this.hideMenu.bind(this);
+    this.showMenu = this.showMenu.bind(this);
+    this.onKeyDown = this.onKeyDown.bind(this);
+    this.onKeyUp = this.onKeyUp.bind(this);
+    this.onMouseDown = this.onMouseDown.bind(this);
+    this.onMouseUp = this.onMouseUp.bind(this);
+
+    // rest of object initialization
     this.init();
   }
 
   init(): void {
+    // pointer-lock-controls object
     this.controls = new PointerLockControls(this.camera, this.renderer.domElement);
+    // movement input state
     this.state = {
       forward: false,
       backward: false,
       left: false,
       right: false,
     };
+    // velocity and direction
     this.velocity = new THREE.Vector3();
     this.direction = new THREE.Vector3();
 
+    // get dom elements
     this.menu = document.querySelector('#pause-menu') as HTMLElement;
     this.instructions = document.querySelector('#instructions') as HTMLElement;
 
-    this.menu.addEventListener('click', () => { this.controls.lock(); });
-    this.controls.addEventListener('lock', () => { this.hideMenu(); });
-    this.controls.addEventListener('unlock', () => { this.showMenu(); });
-    document.addEventListener('keydown', (event) => { this.onKeyDown(event); });
-    document.addEventListener('keyup', (event) => { this.onKeyUp(event) });
-    document.addEventListener('mousedown', () => { this.onMouseDown() });
+    // add event functions as event listeners
+    this.menu.addEventListener('click', this.lockControls);
+    this.controls.addEventListener('lock', this.hideMenu);
+    this.controls.addEventListener('unlock', this.showMenu);
+    document.addEventListener('keydown', this.onKeyDown);
+    document.addEventListener('keyup', this.onKeyUp);
+    document.addEventListener('mousedown', this.onMouseDown);
+    document.addEventListener('mouseup', this.onMouseUp);
 
+    // add controls object to the scene
     this.scene.add(this.controls.getObject());
   }
 
@@ -84,7 +113,22 @@ export default class PlayerController {
       // move the camera based on velocity
       this.controls.moveRight(this.velocity.x * delta);
       this.controls.moveForward(this.velocity.z * delta);
+
+      // handle mouse dragging behaviour
+      if (this.dragging && this.activeObject !== undefined) {
+        // get vector representing 3d direction the camera is facing
+        const dir = this.camera.getWorldDirection(new THREE.Vector3());
+        // get the relative angle between dir vector and x-z plane
+        const theta = Math.asin(dir.dot(new THREE.Vector3(0, 1, 0)));
+        // approximate the height that the mouse has been dragged up from the ground
+        const height = this.activeObject.distance * Math.tan(theta - this.activeObject.angle);
+        this.activeObject.object.setHeight(1+ height);
+      }
     }
+  }
+
+  lockControls(): void {
+    this.controls.lock();
   }
 
   hideMenu(): void {
@@ -139,18 +183,37 @@ export default class PlayerController {
     }
   }
 
+  onMouseUp(): void {
+    // set the dragging variable to false regardless of if the camera is locked or not... false is the safe default state
+    this.dragging = false;
+    this.activeObject = undefined;
+  }
+
   onMouseDown(): void {
     if (this.controls.isLocked) {
+      // set the dragging variable to true, onMouseUp() should handle turning it back to false
+      this.dragging = true;
+
+      // get vector representing 3d direction the camera is facing
       const dir = this.camera.getWorldDirection(new THREE.Vector3());
+      // get the relative angle between dir vector and x-z plane
       const theta = Math.asin(dir.dot(new THREE.Vector3(0, 1, 0)));
       if (theta < -Math.PI / 16) {
+        // if we are looking sufficiently down enough, then using basic trig, calculate the
+        // distance at which a ray projected from the camera intersects with the x-z plane (y = 0)
         const dist = 5 * Math.sin(Math.PI / 2 + theta) /
           (Math.cos(Math.PI / 2 + theta) * this.camera.position.y);
-        const pos = new THREE.Vector3(dir.x, 0, dir.z)
+        // using x and z from the dir vector, translate intersection distance to actual position of intersection
+          const pos = new THREE.Vector3(dir.x, 0, dir.z)
           .normalize()
           .multiplyScalar(dist)
           .add(new THREE.Vector3(this.camera.position.x, 0, this.camera.position.z));
-        console.log(pos);
+        // instantiate bouncy boi at the detected position
+        this.activeObject = {
+          object: new BouncyBoi(this.scene, pos),
+          distance: dist,
+          angle: theta,
+        };
       }
     }
   }

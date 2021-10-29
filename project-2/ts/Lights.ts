@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import SETTINGS from './GameSettings';
 
 export default class Lights {
-  scene: THREE.Scene;
+  private scene: THREE.Scene;
 
   directional!: THREE.DirectionalLight;
   ambient!: THREE.AmbientLight;
