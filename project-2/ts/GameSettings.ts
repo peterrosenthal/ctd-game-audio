@@ -34,6 +34,11 @@ const SETTINGS = {
     deacceleration: 10,
     maxSpeed: 15,
   },
+  oscinoodles: {
+    color: 0x3abaef,
+    minSegments: 1,
+    maxSegments: 32,
+  },
 };
 
 export default SETTINGS;

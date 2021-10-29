@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
-import BouncyBoi from './BouncyBoi';
+import Oscinoodle from './Oscinoodle';
 import SETTINGS from './GameSettings';
 
 interface MovementState {
@@ -10,8 +10,8 @@ interface MovementState {
   right: boolean;
 }
 
-interface SelectedObject {
-  object: BouncyBoi;
+interface OscinoodleInfo {
+  oscinoodle: Oscinoodle;
   distance: number;
   angle: number;
 }
@@ -31,7 +31,7 @@ export default class PlayerController {
 
   dragging: Boolean = false;
 
-  activeObject?: SelectedObject;
+  activeObject?: OscinoodleInfo;
 
   constructor(
     scene: THREE.Scene,
@@ -122,7 +122,7 @@ export default class PlayerController {
         const theta = Math.asin(dir.dot(new THREE.Vector3(0, 1, 0)));
         // approximate the height that the mouse has been dragged up from the ground
         const height = this.activeObject.distance * Math.tan(theta - this.activeObject.angle);
-        this.activeObject.object.setHeight(1+ height);
+        this.activeObject.oscinoodle.setHeight((1 + height) / 2);
       }
     }
   }
@@ -208,9 +208,9 @@ export default class PlayerController {
           .normalize()
           .multiplyScalar(dist)
           .add(new THREE.Vector3(this.camera.position.x, 0, this.camera.position.z));
-        // instantiate bouncy boi at the detected position
+        // instantiate oscinoodle (previously know as bouncy boi) at the detected position
         this.activeObject = {
-          object: new BouncyBoi(this.scene, pos),
+          oscinoodle: new Oscinoodle(this.scene, pos),
           distance: dist,
           angle: theta,
         };
