@@ -30,14 +30,15 @@ const SETTINGS = {
     },
   },
   player: {
-    acceleration: 40,
-    deacceleration: 10,
-    maxSpeed: 15,
+    acceleration: 35,
+    deacceleration: 17,
+    maxSpeed: 13,
   },
   oscinoodles: {
     color: 0x3abaef,
     minSegments: 1,
     maxSegments: 32,
+    segmentHeight: 0.22,
   },
 };
 

@@ -22,7 +22,12 @@ export default class Oscinoodle {
   }
 
   setHeight(height: number): void {
-    this.mesh.scale.y = height;
-    this.mesh.position.y = height / 2;
+    const numSegments = Math.min(Math.max(Math.floor(height /
+          SETTINGS.oscinoodles.segmentHeight),
+        SETTINGS.oscinoodles.minSegments),
+      SETTINGS.oscinoodles.maxSegments,
+    );
+    this.mesh.scale.y = numSegments * SETTINGS.oscinoodles.segmentHeight;
+    this.mesh.position.y = (numSegments * SETTINGS.oscinoodles.segmentHeight) / 2;
   }
 }
