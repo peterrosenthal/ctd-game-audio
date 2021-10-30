@@ -5,7 +5,9 @@ export default class Oscinoodle {
   private scene: THREE.Scene;
   private position: THREE.Vector3;
 
-  mesh!: THREE.Mesh;
+  geometry!: THREE.CylinderGeometry;
+  material!: THREE.MeshPhysicalMaterial;
+  meshes!: THREE.Mesh[];
 
   constructor(scene: THREE.Scene, position: THREE.Vector3) {
     this.scene = scene;
@@ -14,11 +16,32 @@ export default class Oscinoodle {
   }
 
   init(): void {
-    const geometry = new THREE.CylinderGeometry(0.5, 0.5, 1, 32);
-    const material = new THREE.MeshPhysicalMaterial({ color: SETTINGS.oscinoodles.color });
-    this.mesh = new THREE.Mesh(geometry, material);
-    this.mesh.position.copy(this.position);
-    this.scene.add(this.mesh);
+    this.geometry = new THREE.CylinderGeometry(
+      SETTINGS.oscinoodles.radius,
+      SETTINGS.oscinoodles.radius,
+      1,
+      32,
+    );
+    this.material = new THREE.MeshPhysicalMaterial({
+      color: SETTINGS.oscinoodles.color,
+    });
+    this.meshes = [];
+
+    this.pushSegment();
+  }
+
+  pushSegment(): void {
+    const mesh = new THREE.Mesh(this.geometry, this.material);
+    mesh.scale.y = SETTINGS.oscinoodles.segmentHeight;
+    mesh.position.copy(this.position);
+    mesh.position.y = this.meshes.length * SETTINGS.oscinoodles.segmentHeight;
+    this.meshes.push(mesh);
+    this.scene.add(mesh);
+  }
+
+  popSegment(): void {
+    const mesh = this.meshes.pop();
+    mesh?.removeFromParent();
   }
 
   setHeight(height: number): void {
@@ -27,7 +50,14 @@ export default class Oscinoodle {
         SETTINGS.oscinoodles.minSegments),
       SETTINGS.oscinoodles.maxSegments,
     );
-    this.mesh.scale.y = numSegments * SETTINGS.oscinoodles.segmentHeight;
-    this.mesh.position.y = (numSegments * SETTINGS.oscinoodles.segmentHeight) / 2;
+    let diff = numSegments - this.meshes.length;
+    while (diff > 0) {
+      this.pushSegment();
+      diff = numSegments - this.meshes.length;
+    }
+    while (diff < 0) {
+      this.popSegment();
+      diff = numSegments - this.meshes.length;
+    }
   }
 }

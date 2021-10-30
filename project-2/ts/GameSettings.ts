@@ -36,6 +36,7 @@ const SETTINGS = {
   },
   oscinoodles: {
     color: 0x3abaef,
+    radius: 0.25,
     minSegments: 1,
     maxSegments: 32,
     segmentHeight: 0.22,

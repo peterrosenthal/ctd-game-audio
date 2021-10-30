@@ -121,8 +121,14 @@ export default class PlayerController {
         // get the relative angle between dir vector and x-z plane
         const theta = Math.asin(dir.dot(new THREE.Vector3(0, 1, 0)));
         // approximate the height that the mouse has been dragged up from the ground
-        const height = this.activeObject.distance * Math.tan(theta - this.activeObject.angle);
-        this.activeObject.oscinoodle.setHeight((1 + height) / 2);
+        let height = (1 + this.activeObject.distance * Math.tan(theta - this.activeObject.angle)) / 2;
+        // bit of a hack to fix bad math...
+        if (theta - this.activeObject.angle > 0
+          && Math.tan(theta - this.activeObject.angle) < 0) {
+          // set height to a big-enough "default maximum" or something like that
+          height = 700;
+        }
+        this.activeObject.oscinoodle.setHeight(height);
       }
     }
   }
