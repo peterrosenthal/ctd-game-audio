@@ -4,6 +4,15 @@ body {
   margin: 0;
 }
 
+#crosshair {
+  position: absolute;
+  width: 100%;
+  top: 50%;
+  text-align: center;
+  color: lightgray;
+  display: none;
+}
+
 #pause-menu {
   position: absolute;
   width: 100%;

@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 import Oscinoodle from './Oscinoodle';
 import SETTINGS from './GameSettings';
+import { Vector3 } from 'three';
 
 interface MovementState {
   forward: boolean;
@@ -21,6 +22,7 @@ export default class PlayerController {
   private camera: THREE.PerspectiveCamera;
   private renderer: THREE.WebGLRenderer;
 
+  raycaster!: THREE.Raycaster;
   controls!: PointerLockControls;
   state!: MovementState;
   velocity!: THREE.Vector3;
@@ -28,9 +30,11 @@ export default class PlayerController {
 
   menu!: HTMLElement;
   instructions!: HTMLElement;
+  crosshair!: HTMLElement;
 
   dragging: Boolean = false;
 
+  oscinoodles!: Oscinoodle[];
   activeObject?: OscinoodleInfo;
 
   constructor(
@@ -56,6 +60,11 @@ export default class PlayerController {
   }
 
   init(): void {
+    this.oscinoodles = [];
+
+    // raycaster object
+    this.raycaster = new THREE.Raycaster();
+
     // pointer-lock-controls object
     this.controls = new PointerLockControls(this.camera, this.renderer.domElement);
     // movement input state
@@ -72,6 +81,7 @@ export default class PlayerController {
     // get dom elements
     this.menu = document.querySelector('#pause-menu') as HTMLElement;
     this.instructions = document.querySelector('#instructions') as HTMLElement;
+    this.crosshair = document.querySelector('#crosshair') as HTMLElement;
 
     // add event functions as event listeners
     this.menu.addEventListener('click', this.lockControls);
@@ -140,9 +150,11 @@ export default class PlayerController {
   hideMenu(): void {
     this.instructions.style.display = 'none';
     this.menu.style.display = 'none';
+    this.crosshair.style.display = 'block';
   }
 
   showMenu(): void {
+    this.crosshair.style.display = 'none';
     this.menu.style.display = 'block';
     this.instructions.style.display = 'flex';
   }
@@ -200,6 +212,32 @@ export default class PlayerController {
       // set the dragging variable to true, onMouseUp() should handle turning it back to false
       this.dragging = true;
 
+      // check the raycaster to see if we are intersecting any
+      // existing oscinoodles before we try creating a new one
+      this.raycaster.setFromCamera(new THREE.Vector2(), this.camera);
+      for (const noodle of this.oscinoodles) {
+        if (this.raycaster.intersectObjects(noodle.meshes).length > 0) {
+          // get the distance to the bottom of the noodle
+          const dist = this.camera.position.distanceTo(noodle.position);
+
+          // multi-step process to get the angle the camera would be at if it were to be looking at the bottom of the noodle
+          // step 1: create a ray looking at the bootom of the noodle
+          const ray = new THREE.Ray(this.camera.position, new THREE.Vector3());
+          ray.lookAt(noodle.position);
+          // get vector representing 3d direction of the ray to the bottom of the noodle
+          const dir = new Vector3().copy(ray.direction).normalize();
+          // get the relative angle between dir vector and the x-z plane
+          const theta = Math.asin(dir.dot(new THREE.Vector3(0, 1, 0)));
+          this.activeObject = {
+            oscinoodle: noodle,
+            distance: dist,
+            angle: theta,
+          };
+          // return so that we skip over all of the code that would handle creating a new noodle
+          return;
+        }
+      }
+
       // get vector representing 3d direction the camera is facing
       const dir = this.camera.getWorldDirection(new THREE.Vector3());
       // get the relative angle between dir vector and x-z plane
@@ -210,13 +248,16 @@ export default class PlayerController {
         const dist = 5 * Math.sin(Math.PI / 2 + theta) /
           (Math.cos(Math.PI / 2 + theta) * this.camera.position.y);
         // using x and z from the dir vector, translate intersection distance to actual position of intersection
-          const pos = new THREE.Vector3(dir.x, 0, dir.z)
+        const pos = new THREE.Vector3(dir.x, 0, dir.z)
           .normalize()
           .multiplyScalar(dist)
           .add(new THREE.Vector3(this.camera.position.x, 0, this.camera.position.z));
-        // instantiate oscinoodle (previously know as bouncy boi) at the detected position
+        
+        // instantiate new oscinoodle (previously know as bouncy boi) at the detected position
+        const newdle = new Oscinoodle(this.scene, pos);
+        this.oscinoodles.push(newdle);
         this.activeObject = {
-          oscinoodle: new Oscinoodle(this.scene, pos),
+          oscinoodle: newdle,
           distance: dist,
           angle: theta,
         };

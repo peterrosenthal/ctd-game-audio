@@ -3,7 +3,7 @@ import SETTINGS from './GameSettings';
 
 export default class Oscinoodle {
   private scene: THREE.Scene;
-  private position: THREE.Vector3;
+  position: THREE.Vector3;
 
   geometry!: THREE.CylinderGeometry;
   material!: THREE.MeshPhysicalMaterial;
