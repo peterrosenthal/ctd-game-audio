@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 import Oscinoodle from './Oscinoodle';
 import SETTINGS from './GameSettings';
-import { Vector3 } from 'three';
 
 interface MovementState {
   forward: boolean;
@@ -11,10 +10,17 @@ interface MovementState {
   right: boolean;
 }
 
+enum ActionType {
+  SIZE,
+  TIME,
+}
+
 interface OscinoodleInfo {
   oscinoodle: Oscinoodle;
   distance: number;
   angle: number;
+  plane: THREE.Vector3;
+  action: ActionType;
 }
 
 export default class PlayerController {
@@ -128,17 +134,25 @@ export default class PlayerController {
       if (this.dragging && this.activeObject !== undefined) {
         // get vector representing 3d direction the camera is facing
         const dir = this.camera.getWorldDirection(new THREE.Vector3());
-        // get the relative angle between dir vector and x-z plane
-        const theta = Math.asin(dir.dot(new THREE.Vector3(0, 1, 0)));
-        // approximate the height that the mouse has been dragged up from the ground
-        let height = (1 + this.activeObject.distance * Math.tan(theta - this.activeObject.angle)) / 2;
-        // bit of a hack to fix bad math...
-        if (theta - this.activeObject.angle > 0
-          && Math.tan(theta - this.activeObject.angle) < 0) {
-          // set height to a big-enough "default maximum" or something like that
-          height = 700;
+        // get the relative angle between dir vector and action plane
+        const theta = Math.asin(dir.dot(this.activeObject.plane));
+        if (this.activeObject.action === ActionType.SIZE) {
+          // approximate the height that the mouse has been dragged up from the ground
+          let height = (1 + this.activeObject.distance * Math.tan(theta - this.activeObject.angle)) / 2;
+          // bit of a hack to fix bad math...
+          if (theta - this.activeObject.angle > 0
+            && Math.tan(theta - this.activeObject.angle) < 0) {
+            // set height to a big-enough "default maximum" or something like that
+            height = 700;
+          }
+          this.activeObject.oscinoodle.setHeight(height);
+        } else if (this.activeObject.action === ActionType.TIME) {
+          this.activeObject.oscinoodle.setRotation(
+            this.activeObject.plane,
+            theta * 1.5,
+            0.9 * theta * Math.sqrt(Math.sqrt(this.activeObject.distance)),
+          );
         }
-        this.activeObject.oscinoodle.setHeight(height);
       }
     }
   }
@@ -207,60 +221,97 @@ export default class PlayerController {
     this.activeObject = undefined;
   }
 
-  onMouseDown(): void {
-    if (this.controls.isLocked) {
+  onMouseDown(event: MouseEvent): void {
+    if (event.button === 0) {
+      if (this.controls.isLocked) {
+        // set the dragging variable to true, onMouseUp() should handle turning it back to false
+        this.dragging = true;
+
+        // the plane we are concerned with checking here is always going to be the x-z plane (y = 0)
+        const plane = new THREE.Vector3(0, 1, 0);
+
+        // check the raycaster to see if we are intersecting any
+        // existing oscinoodles before we try creating a new one
+        this.raycaster.setFromCamera(new THREE.Vector2(), this.camera);
+        for (const noodle of this.oscinoodles) {
+          if (this.raycaster.intersectObjects(noodle.meshes).length > 0) {
+            // get the distance to the bottom of the noodle
+            const dist = this.camera.position.distanceTo(noodle.position);
+
+            // multi-step process to get the angle the camera would be at if it were to be looking at the bottom of the noodle
+            // step 1: create a ray looking at the bootom of the noodle
+            const ray = new THREE.Ray(this.camera.position, new THREE.Vector3());
+            ray.lookAt(noodle.position);
+            // step 2: get vector representing 3d direction of the ray to the bottom of the noodle
+            const dir = new THREE.Vector3().copy(ray.direction).normalize();
+            // step 3: get the relative angle between dir vector and the x-z plane
+            const theta = Math.asin(dir.dot(plane));
+
+            // keep track of some of the object's info while dragging the mouse
+            this.activeObject = {
+              oscinoodle: noodle,
+              distance: dist,
+              angle: theta,
+              plane: plane,
+              action: ActionType.SIZE,
+            };
+            // return so that we skip over all of the code that would handle creating a new noodle
+            return;
+          }
+        }
+
+        // get vector representing 3d direction the camera is facing
+        const dir = this.camera.getWorldDirection(new THREE.Vector3());
+        // get the relative angle between dir vector and x-z plane
+        const theta = Math.asin(dir.dot(plane));
+        if (theta < -Math.PI / 16) {
+          // if we are looking sufficiently down enough, then using basic trig, calculate the
+          // distance at which a ray projected from the camera intersects with the x-z plane (y = 0)
+          const dist = 5 * Math.sin(Math.PI / 2 + theta) /
+            (Math.cos(Math.PI / 2 + theta) * this.camera.position.y);
+          // using x and z from the dir vector, translate intersection distance to actual position of intersection
+          const pos = new THREE.Vector3(dir.x, 0, dir.z)
+            .normalize()
+            .multiplyScalar(dist)
+            .add(new THREE.Vector3(this.camera.position.x, 0, this.camera.position.z));
+
+          // instantiate new oscinoodle (previously know as bouncy boi) at the detected position
+          const newdle = new Oscinoodle(this.scene, pos);
+          this.oscinoodles.push(newdle);
+          this.activeObject = {
+            oscinoodle: newdle,
+            distance: dist,
+            angle: theta,
+            plane: plane,
+            action: ActionType.SIZE,
+          };
+        }
+      }
+    } else if (event.button === 2) {
       // set the dragging variable to true, onMouseUp() should handle turning it back to false
       this.dragging = true;
 
-      // check the raycaster to see if we are intersecting any
-      // existing oscinoodles before we try creating a new one
+      // check the raycaster to see if we are intersecting any noodles
       this.raycaster.setFromCamera(new THREE.Vector2(), this.camera);
       for (const noodle of this.oscinoodles) {
         if (this.raycaster.intersectObjects(noodle.meshes).length > 0) {
           // get the distance to the bottom of the noodle
           const dist = this.camera.position.distanceTo(noodle.position);
 
-          // multi-step process to get the angle the camera would be at if it were to be looking at the bottom of the noodle
-          // step 1: create a ray looking at the bootom of the noodle
-          const ray = new THREE.Ray(this.camera.position, new THREE.Vector3());
-          ray.lookAt(noodle.position);
-          // get vector representing 3d direction of the ray to the bottom of the noodle
-          const dir = new Vector3().copy(ray.direction).normalize();
-          // get the relative angle between dir vector and the x-z plane
-          const theta = Math.asin(dir.dot(new THREE.Vector3(0, 1, 0)));
+          // get vector representing 3d direction the camera is facing
+          const dir = this.camera.getWorldDirection(new THREE.Vector3());
+          // get the plane which is currently bisecting the screen left from right
+          const plane = new THREE.Vector3(dir.z, 0, -dir.x).normalize();
+
+          // keep track of some of the object's info while dragging the mouse
           this.activeObject = {
             oscinoodle: noodle,
             distance: dist,
-            angle: theta,
-          };
-          // return so that we skip over all of the code that would handle creating a new noodle
-          return;
+            angle: 0,
+            plane: plane,
+            action: ActionType.TIME,
+          }
         }
-      }
-
-      // get vector representing 3d direction the camera is facing
-      const dir = this.camera.getWorldDirection(new THREE.Vector3());
-      // get the relative angle between dir vector and x-z plane
-      const theta = Math.asin(dir.dot(new THREE.Vector3(0, 1, 0)));
-      if (theta < -Math.PI / 16) {
-        // if we are looking sufficiently down enough, then using basic trig, calculate the
-        // distance at which a ray projected from the camera intersects with the x-z plane (y = 0)
-        const dist = 5 * Math.sin(Math.PI / 2 + theta) /
-          (Math.cos(Math.PI / 2 + theta) * this.camera.position.y);
-        // using x and z from the dir vector, translate intersection distance to actual position of intersection
-        const pos = new THREE.Vector3(dir.x, 0, dir.z)
-          .normalize()
-          .multiplyScalar(dist)
-          .add(new THREE.Vector3(this.camera.position.x, 0, this.camera.position.z));
-        
-        // instantiate new oscinoodle (previously know as bouncy boi) at the detected position
-        const newdle = new Oscinoodle(this.scene, pos);
-        this.oscinoodles.push(newdle);
-        this.activeObject = {
-          oscinoodle: newdle,
-          distance: dist,
-          angle: theta,
-        };
       }
     }
   }

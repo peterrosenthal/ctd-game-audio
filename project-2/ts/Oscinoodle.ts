@@ -34,7 +34,7 @@ export default class Oscinoodle {
     const mesh = new THREE.Mesh(this.geometry, this.material);
     mesh.scale.y = SETTINGS.oscinoodles.segmentHeight;
     mesh.position.copy(this.position);
-    mesh.position.y = this.meshes.length * SETTINGS.oscinoodles.segmentHeight;
+    mesh.position.y = this.position.y + this.meshes.length * SETTINGS.oscinoodles.segmentHeight;
     this.meshes.push(mesh);
     this.scene.add(mesh);
   }
@@ -58,6 +58,27 @@ export default class Oscinoodle {
     while (diff < 0) {
       this.popSegment();
       diff = numSegments - this.meshes.length;
+    }
+  }
+
+  setRotation(plane: THREE.Vector3, angle: number, dislacement: number): void {
+    let theta = Math.atan(plane.z / plane.x);
+    if (plane.x <= 0) {
+      theta += Math.PI;
+    }
+    if (plane.x >= 0 && plane.z <= 0) {
+      theta += 2 * Math.PI;
+    }
+    // console.log(`theta: ${theta}, plane.x: ${plane.x}, plane.z: ${plane.z}, angle: ${angle}`);
+    for (let i = 0; i < this.meshes.length; i++) {
+      const mesh = this.meshes[i];
+      mesh.position.set(
+        this.position.x + (i / this.meshes.length) * (i / this.meshes.length) * dislacement * Math.cos(theta),
+        this.position.y + i * SETTINGS.oscinoodles.segmentHeight * Math.cos(Math.sign(angle) * Math.sqrt(Math.abs(angle / 2))),
+        this.position.z + (i / this.meshes.length) * (i / this.meshes.length) * dislacement * Math.sin(theta),
+      );
+      mesh.rotation.y = 2 * Math.PI - theta;
+      mesh.rotation.z = -angle * (i / this.meshes.length);
     }
   }
 }
