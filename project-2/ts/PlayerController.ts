@@ -147,10 +147,10 @@ export default class PlayerController {
           }
           this.activeObject.oscinoodle.setHeight(height);
         } else if (this.activeObject.action === ActionType.TIME) {
-          this.activeObject.oscinoodle.setRotation(
+          this.activeObject.oscinoodle.setSwing(
             this.activeObject.plane,
             theta * 1.5,
-            0.9 * theta * Math.sqrt(Math.sqrt(this.activeObject.distance)),
+            this.activeObject.distance,
           );
         }
       }
