@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { Vector3 } from 'three';
 import SETTINGS from './GameSettings';
 
 export default class Oscinoodle {
@@ -15,6 +14,7 @@ export default class Oscinoodle {
   maxSwingDisplacement!: number;
   swingPeriod!: number;
   swingDistance!: number;
+  swingTime!: number;
 
   constructor(scene: THREE.Scene, position: THREE.Vector3) {
     this.scene = scene;
@@ -34,12 +34,24 @@ export default class Oscinoodle {
     });
     this.meshes = [];
 
-    this.setSwing(new Vector3(), 0, 0);
-
     this.pushSegment();
   }
 
+  update(delta: number): void {
+    if (this.maxSwingAngle !== 0) {
+      let t = this.swingTime % (this.swingPeriod * 2);
+      if (t > this.swingPeriod) {
+        t = 2 * this.swingPeriod - t;
+      }
+      t /= this.swingPeriod;
+      this.swing(THREE.MathUtils.lerp(this.maxSwingAngle, -this.maxSwingAngle, t));
+      this.swingTime += delta;
+    }
+  }
+
   pushSegment(): void {
+    this.setSwing(new THREE.Vector3(1, 1, 1), 0, 1);
+
     const mesh = new THREE.Mesh(this.geometry, this.material);
     mesh.scale.y = SETTINGS.oscinoodles.segmentHeight;
     mesh.position.copy(this.position);
@@ -74,8 +86,9 @@ export default class Oscinoodle {
     this.swingPlane = plane;
     this.maxSwingAngle = angle;
     this.maxSwingDisplacement = 0.55 * angle * Math.sqrt(Math.sqrt(distance));
-    this.swingPeriod = this.maxSwingDisplacement * this.meshes.length / 2;
+    this.swingPeriod = Math.abs(this.maxSwingDisplacement * this.meshes.length / 3);
     this.swingDistance = distance;
+    this.swingTime = 0;
     this.swing(this.maxSwingAngle);
   }
 

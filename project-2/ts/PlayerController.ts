@@ -154,6 +154,11 @@ export default class PlayerController {
           );
         }
       }
+
+      // call update cycle on all of the noodles
+      for (const noodle of this.oscinoodles) {
+        noodle.update(delta);
+      }
     }
   }
 
