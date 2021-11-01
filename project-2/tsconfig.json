@@ -9,7 +9,6 @@
     "noImplicitThis": true,
     "module": "es6",
     "moduleResolution": "node",
-    "outDir": "js",
     "strict": true,
     "target": "es6",
   },

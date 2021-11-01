@@ -1,4 +1,5 @@
 const path = require('path');
+const ResolveTypeScriptPlugin = require("resolve-typescript-plugin").default;
 
 module.exports = {
   entry: './ts/main.ts',
@@ -11,7 +12,10 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: ['.ts']
+    extensions: ['.ts'],
+    plugins: [new ResolveTypeScriptPlugin({
+      includeNodeModules: true
+    })]
   },
   output: {
     filename: 'dist/bundle.js',

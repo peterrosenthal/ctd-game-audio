@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import * as Tone from 'tone';
 import SETTINGS from './GameSettings';
 
 export default class Oscinoodle {
@@ -16,6 +17,10 @@ export default class Oscinoodle {
   swingDistance!: number;
   swingTime!: number;
 
+  tone!: Tone.Synth;
+  firstNoteTriggered!: boolean;
+  secondNoteTriggered!: boolean;
+
   constructor(scene: THREE.Scene, position: THREE.Vector3) {
     this.scene = scene;
     this.position = position;
@@ -32,7 +37,13 @@ export default class Oscinoodle {
     this.material = new THREE.MeshPhysicalMaterial({
       color: SETTINGS.oscinoodles.color,
     });
+
     this.meshes = [];
+
+    this.tone = new Tone.Synth().toDestination();
+
+    this.firstNoteTriggered = false;
+    this.secondNoteTriggered = false;
 
     this.pushSegment();
   }
@@ -40,7 +51,17 @@ export default class Oscinoodle {
   update(delta: number): void {
     if (this.maxSwingAngle !== 0) {
       let t = this.swingTime % (this.swingPeriod * 2);
+      if (t > 0 && t < this.swingPeriod && !this.firstNoteTriggered) {
+        this.tone.triggerAttackRelease('C4', '8n', Tone.now());
+        this.firstNoteTriggered = true;
+        this.secondNoteTriggered = false;
+      }
       if (t > this.swingPeriod) {
+        if (!this.secondNoteTriggered) {
+          this.tone.triggerAttackRelease('C4', '8n', Tone.now());
+          this.secondNoteTriggered = true;
+          this.firstNoteTriggered = false;
+        }
         t = 2 * this.swingPeriod - t;
       }
       t /= this.swingPeriod;
@@ -101,7 +122,6 @@ export default class Oscinoodle {
     if (this.swingPlane.x >= 0 && this.swingPlane.z <= 0) {
       theta += 2 * Math.PI;
     }
-    // console.log(`theta: ${theta}, plane.x: ${plane.x}, plane.z: ${plane.z}, angle: ${angle}`);
     for (let i = 0; i < this.meshes.length; i++) {
       const mesh = this.meshes[i];
       mesh.position.set(
