@@ -27,6 +27,7 @@ export default class PlayerController {
   private scene: THREE.Scene;
   private camera: THREE.PerspectiveCamera;
   private renderer: THREE.WebGLRenderer;
+  private listener: THREE.AudioListener;
 
   raycaster!: THREE.Raycaster;
   controls!: PointerLockControls;
@@ -46,11 +47,13 @@ export default class PlayerController {
   constructor(
     scene: THREE.Scene,
     camera: THREE.PerspectiveCamera,
-    renderer: THREE.WebGLRenderer) {
+    renderer: THREE.WebGLRenderer,
+    listener: THREE.AudioListener) {
     // assign private members
     this.scene = scene;
     this.camera = camera;
     this.renderer = renderer;
+    this.listener = listener;
 
     // bind event functions
     this.lockControls = this.lockControls.bind(this);
@@ -100,6 +103,9 @@ export default class PlayerController {
 
     // add controls object to the scene
     this.scene.add(this.controls.getObject());
+
+    // add audio listener to camera
+    this.camera.add(this.listener);
   }
 
   update(delta: number): void {
@@ -281,7 +287,7 @@ export default class PlayerController {
             .add(new THREE.Vector3(this.camera.position.x, 0, this.camera.position.z));
 
           // instantiate new oscinoodle (previously know as bouncy boi) at the detected position
-          const newdle = new Oscinoodle(this.scene, pos);
+          const newdle = new Oscinoodle(this.scene, this.listener, pos);
           this.oscinoodles.push(newdle);
           this.activeObject = {
             oscinoodle: newdle,

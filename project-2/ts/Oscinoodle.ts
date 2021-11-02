@@ -1,9 +1,9 @@
 import * as THREE from 'three';
-import * as Tone from 'tone';
 import SETTINGS from './GameSettings';
 
 export default class Oscinoodle {
   private scene: THREE.Scene;
+  private listener: THREE.AudioListener;
   position: THREE.Vector3;
 
   geometry!: THREE.CylinderGeometry;
@@ -17,13 +17,23 @@ export default class Oscinoodle {
   swingDistance!: number;
   swingTime!: number;
 
-  tone!: Tone.Synth;
+  sound!: THREE.PositionalAudio;
   firstNoteTriggered!: boolean;
   secondNoteTriggered!: boolean;
 
-  constructor(scene: THREE.Scene, position: THREE.Vector3) {
+  constructor(
+    scene: THREE.Scene,
+    listener: THREE.AudioListener,
+    position: THREE.Vector3) {
+    // assign private members
     this.scene = scene;
+    this.listener = listener;
     this.position = position;
+
+    // bind event functions
+    this.audioLoaded = this.audioLoaded.bind(this);
+
+    // rest of object initialization
     this.init();
   }
 
@@ -40,25 +50,38 @@ export default class Oscinoodle {
 
     this.meshes = [];
 
-    this.tone = new Tone.Synth().toDestination();
-
+    this.sound = new THREE.PositionalAudio(this.listener);
     this.firstNoteTriggered = false;
     this.secondNoteTriggered = false;
+    const audioLoader = new THREE.AudioLoader();
+    audioLoader.load(
+      '../audio/notes.wav',
+      this.audioLoaded,
+      undefined,
+      (error) => { console.log(error); },
+    );
 
     this.pushSegment();
+    this.meshes[0].add(this.sound);
   }
 
   update(delta: number): void {
     if (this.maxSwingAngle !== 0) {
       let t = this.swingTime % (this.swingPeriod * 2);
       if (t > 0 && t < this.swingPeriod && !this.firstNoteTriggered) {
-        this.tone.triggerAttackRelease('C4', '8n', Tone.now());
+        if (this.sound.isPlaying) {
+          this.sound.stop();
+        }
+        this.sound.play();
         this.firstNoteTriggered = true;
         this.secondNoteTriggered = false;
       }
       if (t > this.swingPeriod) {
         if (!this.secondNoteTriggered) {
-          this.tone.triggerAttackRelease('C4', '8n', Tone.now());
+          if (this.sound.isPlaying) {
+            this.sound.stop();
+          }
+          this.sound.play();
           this.secondNoteTriggered = true;
           this.firstNoteTriggered = false;
         }
@@ -132,5 +155,12 @@ export default class Oscinoodle {
       mesh.rotation.y = 2 * Math.PI - theta;
       mesh.rotation.z = -angle * (i / this.meshes.length);
     }
+  }
+  
+  audioLoaded(buffer: AudioBuffer) {
+    this.sound.setBuffer(buffer);
+    this.sound.offset = SETTINGS.oscinoodles.maxSegments + 1 - this.meshes.length;
+    this.sound.duration = 0.75;
+    this.sound.setRefDistance(SETTINGS.oscinoodles.positionalAudio.refDistance);
   }
 }

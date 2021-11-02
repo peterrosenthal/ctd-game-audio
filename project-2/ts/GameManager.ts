@@ -7,6 +7,7 @@ export default class GameManager {
   scene!: THREE.Scene;
   camera!: THREE.PerspectiveCamera;
   renderer!: THREE.WebGLRenderer;
+  listener!: THREE.AudioListener;
 
   lights!: Lights;
   player!: PlayerController;
@@ -45,11 +46,14 @@ export default class GameManager {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(this.renderer.domElement);
 
+    // audio listener
+    this.listener = new THREE.AudioListener();
+
     // lights
     this.lights = new Lights(this.scene);
 
     // player controller
-    this.player = new PlayerController(this.scene, this.camera, this.renderer);
+    this.player = new PlayerController(this.scene, this.camera, this.renderer, this.listener);
   }
 
   start(): void {

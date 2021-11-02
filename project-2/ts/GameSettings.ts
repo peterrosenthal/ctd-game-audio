@@ -40,6 +40,9 @@ const SETTINGS = {
     minSegments: 1,
     maxSegments: 32,
     segmentHeight: 0.22,
+    positionalAudio: {
+      refDistance: 20,
+    },
   },
 };
 
