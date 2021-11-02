@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import SETTINGS from './GameSettings';
 import Lights from './Lights';
 import PlayerController from './PlayerController';
+import Skybox from './Skybox';
 
 export default class GameManager {
   scene!: THREE.Scene;
@@ -9,6 +10,7 @@ export default class GameManager {
   renderer!: THREE.WebGLRenderer;
   listener!: THREE.AudioListener;
 
+  skybox!: Skybox;
   lights!: Lights;
   player!: PlayerController;
 
@@ -48,6 +50,9 @@ export default class GameManager {
 
     // audio listener
     this.listener = new THREE.AudioListener();
+
+    // skybox
+    this.skybox = new Skybox(this.scene, this.renderer);
 
     // lights
     this.lights = new Lights(this.scene);
