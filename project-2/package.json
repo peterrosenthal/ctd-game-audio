@@ -5,8 +5,7 @@
   "main": "ts/main.ts",
   "type": "module",
   "scripts": {
-    "dev": "webpack --mode=none",
-    "prod": "webpack --mode=production",
+    "build": "esbuild ./ts/main.ts --bundle --outfile=dist/bundle.js",
     "serve": "npx http-server"
   },
   "author": "Peter Rosenthal",
@@ -15,14 +14,11 @@
     "@types/three": "^0.133.1",
     "@typescript-eslint/eslint-plugin": "^5.1.0",
     "@typescript-eslint/parser": "^5.1.0",
+    "esbuild": "^0.13.12",
     "eslint": "^8.0.1",
     "http-server": "^13.0.2",
-    "resolve-typescript-plugin": "^1.1.1",
     "three": "^0.133.1",
     "tone": "^14.7.77",
-    "ts-loader": "^9.2.6",
-    "typescript": "^4.4.4",
-    "webpack": "^5.58.2",
-    "webpack-cli": "^4.9.1"
+    "typescript": "^4.4.4"
   }
 }
