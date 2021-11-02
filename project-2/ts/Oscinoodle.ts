@@ -102,11 +102,15 @@ export default class Oscinoodle {
     mesh.position.y = this.position.y + this.meshes.length * SETTINGS.oscinoodles.segmentHeight;
     this.meshes.push(mesh);
     this.scene.add(mesh);
+
+    this.setSoundFileOffset();
   }
 
   popSegment(): void {
     const mesh = this.meshes.pop();
     mesh?.removeFromParent();
+
+    this.setSoundFileOffset();
   }
 
   setHeight(height: number): void {
@@ -156,11 +160,16 @@ export default class Oscinoodle {
       mesh.rotation.z = -angle * (i / this.meshes.length);
     }
   }
+
+  setSoundFileOffset() {
+    this.sound.offset = SETTINGS.oscinoodles.maxSegments + 1 - this.meshes.length;
+  }
   
   audioLoaded(buffer: AudioBuffer) {
     this.sound.setBuffer(buffer);
-    this.sound.offset = SETTINGS.oscinoodles.maxSegments + 1 - this.meshes.length;
+    this.setSoundFileOffset();
     this.sound.duration = 0.75;
     this.sound.setRefDistance(SETTINGS.oscinoodles.positionalAudio.refDistance);
+    this.sound.setDistanceModel('exponential');
   }
 }
