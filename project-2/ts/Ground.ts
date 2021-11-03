@@ -35,21 +35,21 @@ export default class Ground {
       this.camera.position.z,
     );
     this.texture.offset.set(
-      this.camera.position.x / 5,
-      -this.camera.position.z / 5,
+      this.camera.position.x / 10 * 3,
+      -this.camera.position.z / 10 * 3,
     );
   }
 
   onTextureLoaded(): void {
     this.texture.wrapS = THREE.RepeatWrapping;
     this.texture.wrapT = THREE.RepeatWrapping;
-    this.texture.repeat.x = 2000;
-    this.texture.repeat.y = 2000;
+    this.texture.repeat.x = 3000;
+    this.texture.repeat.y = 3000;
 
     const geometry = new THREE.PlaneGeometry(10000, 10000);
     const material = new THREE.MeshPhysicalMaterial({
       map: this.texture,
-      opacity: 0.001,
+      opacity: 0.1,
     });
     this.mesh = new THREE.Mesh(geometry, material);
     this.mesh.position.set(0, -2, 0);
