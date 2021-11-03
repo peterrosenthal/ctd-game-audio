@@ -1,0 +1,354 @@
+<REAPER_PROJECT 0.1 "6.35/linux-x86_64" 1635957176
+  RIPPLE 0
+  GROUPOVERRIDE 0 0 0
+  AUTOXFADE 1
+  ENVATTACH 1
+  POOLEDENVATTACH 0
+  MIXERUIFLAGS 11 48
+  PEAKGAIN 1
+  FEEDBACK 0
+  PANLAW 1
+  PROJOFFS 0 0 0
+  MAXPROJLEN 0 600
+  GRID 3199 8 1 8 1 0 0 0
+  TIMEMODE 1 5 -1 30 0 0 -1
+  VIDEO_CONFIG 0 0 256
+  PANMODE 3
+  CURSOR 0
+  ZOOM 25.60083391606184 0 0
+  VZOOMEX 7 0
+  USE_REC_CFG 0
+  RECMODE 1
+  SMPTESYNC 0 30 100 40 1000 300 0 0 1 0 0
+  LOOP 0
+  LOOPGRAN 0 4
+  RECORD_PATH "" ""
+  <RECORD_CFG
+  >
+  <APPLYFX_CFG
+  >
+  RENDER_FILE ""
+  RENDER_PATTERN notes
+  RENDER_FMT 0 2 44100
+  RENDER_1X 0
+  RENDER_RANGE 0 0 33 18 1000
+  RENDER_RESAMPLE 3 0 1
+  RENDER_ADDTOPROJ 0
+  RENDER_STEMS 0
+  RENDER_DITHER 0
+  TIMELOCKMODE 1
+  TEMPOENVLOCKMODE 1
+  ITEMMIX 0
+  DEFPITCHMODE 589824 0
+  TAKELANE 1
+  SAMPLERATE 44100 0 0
+  <RENDER_CFG
+    ZXZhdxgAAA==
+  >
+  LOCK 1
+  <METRONOME 6 2
+    VOL 0.25 0.125
+    FREQ 800 1600 1
+    BEATLEN 4
+    SAMPLES "" ""
+    PATTERN 2863311530 2863311529
+  >
+  GLOBAL_AUTO -1
+  TEMPO 120 4 4
+  PLAYRATE 1 0 0.25 4
+  SELECTION 0 33
+  SELECTION2 0 33
+  MASTERAUTOMODE 0
+  MASTERTRACKHEIGHT 0 0
+  MASTERPEAKCOL 16576
+  MASTERMUTESOLO 0
+  MASTERTRACKVIEW 0 0.6667 0.5 0.5 -1 -1 -1 0 0 0 -1 -1 0
+  MASTERHWOUT 0 0 1 0 0 0 0 -1
+  MASTER_NCH 2 2
+  MASTER_VOLUME 1 0 -1 -1 1
+  MASTER_FX 1
+  MASTER_SEL 0
+  <MASTERPLAYSPEEDENV
+    EGUID {DAE08F9B-49CC-6956-417F-B3BA137FF68C}
+    ACT 0 -1
+    VIS 0 1 1
+    LANEHEIGHT 0 0
+    ARM 0
+    DEFSHAPE 0 -1 -1
+  >
+  <TEMPOENVEX
+    EGUID {BFAED548-37B6-FA52-CC16-CBDF071C94FA}
+    ACT 0 -1
+    VIS 1 0 1
+    LANEHEIGHT 0 0
+    ARM 0
+    DEFSHAPE 1 -1 -1
+  >
+  <PROJBAY
+  >
+  <TRACK {0AAB14A1-99CD-693A-C6F1-D45887CA15BA}
+    NAME Helm
+    PEAKCOL 16576
+    BEAT -1
+    AUTOMODE 0
+    VOLPAN 1 0 -1 -1 1
+    MUTESOLO 0 0 0
+    IPHASE 0
+    PLAYOFFS 0 1
+    ISBUS 0 0
+    BUSCOMP 0 0 0 0 0
+    SHOWINMIX 1 0.6667 0.5 1 0.5 -1 -1 -1
+    FREEMODE 0
+    SEL 0
+    REC 1 5088 1 0 0 0 0
+    VU 2
+    TRACKHEIGHT 0 0 0 0 0 0
+    INQ 0 0 0 0.5 100 0 0 100
+    NCHAN 2
+    FX 1
+    TRACKID {0AAB14A1-99CD-693A-C6F1-D45887CA15BA}
+    PERF 0
+    MIDIOUT -1
+    MAINSEND 1 0
+    <VOLENV
+      EGUID {9E1C8FA8-E129-ACE2-6BB3-D9851B7B1F52}
+      ACT 1 -1
+      VIS 1 1 1
+      LANEHEIGHT 0 0
+      ARM 1
+      DEFSHAPE 0 -1 -1
+      VOLTYPE 1
+      PT 0 1 0
+      PT 16.13228699 1 0
+      PT 27 0.83176377 0
+      PT 33 0.56234133 0 0 1
+    >
+    <FXCHAIN
+      WNDRECT 389 120 1260 814
+      SHOW 0
+      LASTSEL 0
+      DOCKED 0
+      BYPASS 0 0 0
+      <LV2 "LV2i: Helm (Matt Tytel) (2 out)" http://tytel.org/helm ""
+        CFG 0 992 734 ""
+        MIDI lv2_events_in 0 0 
+        P amp_attack 0.027386000379920006 amp_decay 0.375 amp_release 0.075000002980232239 amp_sustain 1 arp_frequency 0.60000002384185791
+        P arp_gate 0.5 arp_octaves 0 arp_on 0 arp_pattern 0 arp_sync 0.333332985639572144 arp_tempo 0.818181991577148438
+        P beats_per_minute 0.357143014669418335 cross_modulation 0 cutoff 0.525252997875213623 delay_dry_wet 0.5
+        P delay_feedback 0.699999988079071045 delay_frequency 0.571429014205932617 delay_on 0 delay_sync 0.333332985639572144
+        P delay_tempo 0.818181991577148438 distortion_drive 0.5 distortion_mix 1 distortion_on 0 distortion_type 0
+        P fil_attack 0 fil_decay 0.375 fil_env_depth 0.5 fil_release 0.375 fil_sustain 0.5 filter_blend 0 filter_drive 0.375
+        P filter_on 0 filter_shelf 0 filter_style 0 formant_on 0 formant_x 0.5 formant_y 0.5 keytrack 0.5 legato 0
+        P mod_attack 0 mod_decay 0.375 mod_release 0.375 mod_sustain 0.5 mono_lfo_1_amplitude 1 mono_lfo_1_frequency 0.615384995937347412
+        P mono_lfo_1_retrigger 1 mono_lfo_1_sync 0.333332985639572144 mono_lfo_1_tempo 0.545454978942871094 mono_lfo_1_waveform 0
+        P mono_lfo_2_amplitude 1 mono_lfo_2_frequency 0.615384995937347412 mono_lfo_2_retrigger 1 mono_lfo_2_sync 0.333332985639572144
+        P mono_lfo_2_tempo 0.636363983154296875 mono_lfo_2_waveform 0 noise_volume 0.112903222441673279 num_steps 0.225805997848510742
+        P osc_1_transpose 0.5 osc_1_tune 0.5 osc_1_unison_detune 0.100000001490116119 osc_1_unison_voices 0 osc_1_volume 0.474999994039535522
+        P osc_1_waveform 0 osc_2_transpose 0.5 osc_2_tune 0.55859375 osc_2_unison_detune 0.100000001490116119 osc_2_unison_voices 0
+        P osc_2_volume 0.425000011920928955 osc_2_waveform 0.800000011920928955 osc_feedback_amount 0.5 osc_feedback_transpose 0.5
+        P osc_feedback_tune 0.5 pitch_bend_range 0.083333000540733337 poly_lfo_amplitude 1 poly_lfo_frequency 0.615384995937347412
+        P poly_lfo_sync 0.333332985639572144 poly_lfo_tempo 0.636363983154296875 poly_lfo_waveform 0 polyphony 0.096773996949195862
+        P portamento 0.25 portamento_type 0 resonance 0.5 reverb_damping 0.5 reverb_dry_wet 0.5 reverb_feedback 0.5
+        P reverb_on 0 step_frequency 0.636363983154296875 step_seq_00 0.5 step_seq_01 0.5 step_seq_02 0.5 step_seq_03 0.5
+        P step_seq_04 0.5 step_seq_05 0.5 step_seq_06 0.5 step_seq_07 0.5 step_seq_08 0.5 step_seq_09 0.5 step_seq_10 0.5
+        P step_seq_11 0.5 step_seq_12 0.5 step_seq_13 0.5 step_seq_14 0.5 step_seq_15 0.5 step_seq_16 0.5 step_seq_17 0.5
+        P step_seq_18 0.5 step_seq_19 0.5 step_seq_20 0.5 step_seq_21 0.5 step_seq_22 0.5 step_seq_23 0.5 step_seq_24 0.5
+        P step_seq_25 0.5 step_seq_26 0.5 step_seq_27 0.5 step_seq_28 0.5 step_seq_29 0.5 step_seq_30 0.5 step_seq_31 0.5
+        P step_sequencer_retrigger 1 step_sequencer_sync 0.333332985639572144 step_sequencer_tempo 0.636363983154296875
+        P step_smoothing 0 stutter_frequency 0.428570985794067383 stutter_on 0 stutter_resample_frequency 0.727272987365722656
+        P stutter_resample_sync 0.333332985639572144 stutter_resample_tempo 0.545454978942871094 stutter_softness 0.200000002980232239
+        P stutter_sync 0.333332985639572144 stutter_tempo 0.400000005960464478 sub_octave 0 sub_shuffle 0.48756253719329834
+        P sub_volume 0.660000026226043701 sub_waveform 0.100000001490116119 unison_1_harmonize 0 unison_2_harmonize 0
+        P velocity_track 0.5 volume 0.499969005584716797
+        <STATE
+          <X urn:juce:stateBinary http://lv2plug.in/ns/ext/atom#Chunk 3
+            ew0KICAibGljZW5zZSI6ICJQYXRjaCAoYykgYnkgLiAgVGhpcyBwYXRjaCBpcyBsaWNlbnNlZCB1bmRlciBhIENyZWF0aXZlIENvbW1vbnMgQXR0cmlidXRpb24gNC4w
+            IEludGVybmF0aW9uYWwgTGljZW5zZS4gIFlvdSBzaG91bGQgaGF2ZSByZWNlaXZlZCBhIGNvcHkgb2YgdGhlIGxpY2Vuc2UgYWxvbmcgd2l0aCB0aGlzIHdvcmsuICBJ
+            ZiBub3QsIHNlZSA8aHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbGljZW5zZXMvYnkvNC4wLz4uIiwNCiAgInN5bnRoX3ZlcnNpb24iOiAiMC45LjAiLA0KICAicGF0
+            Y2hfbmFtZSI6ICIiLA0KICAiZm9sZGVyX25hbWUiOiAiIiwNCiAgImF1dGhvciI6ICIiLA0KICAic2V0dGluZ3MiOiB7DQogICAgImFtcF9hdHRhY2siOiAwLjEwOTU0
+            NDAwMTUxOTY4MDAyMzE5LA0KICAgICJhbXBfZGVjYXkiOiAxLjUsDQogICAgImFtcF9yZWxlYXNlIjogMC4yOTk5OTk5OTk5OTk5OTk5ODg5LA0KICAgICJhbXBfc3Vz
+            dGFpbiI6IDEsDQogICAgImFycF9mcmVxdWVuY3kiOiAyLA0KICAgICJhcnBfZ2F0ZSI6IDAuNSwNCiAgICAiYXJwX29jdGF2ZXMiOiAxLA0KICAgICJhcnBfb24iOiAw
+            LA0KICAgICJhcnBfcGF0dGVybiI6IDAsDQogICAgImFycF9zeW5jIjogMSwNCiAgICAiYXJwX3RlbXBvIjogOSwNCiAgICAiYmVhdHNfcGVyX21pbnV0ZSI6IDIsDQog
+            ICAgImNyb3NzX21vZHVsYXRpb24iOiAwLA0KICAgICJjdXRvZmYiOiA4MC4wMDAwNDU3NzYzNjcxODc1LA0KICAgICJkZWxheV9kcnlfd2V0IjogMC41LA0KICAgICJk
+            ZWxheV9mZWVkYmFjayI6IDAuNDAwMDAwMDAwMDAwMDAwMDIyMiwNCiAgICAiZGVsYXlfZnJlcXVlbmN5IjogMi4wMDAwMDMwOTk0NDE1MjgzMjAzLA0KICAgICJkZWxh
+            eV9vbiI6IDAsDQogICAgImRlbGF5X3N5bmMiOiAxLA0KICAgICJkZWxheV90ZW1wbyI6IDksDQogICAgImRpc3RvcnRpb25fZHJpdmUiOiAwLA0KICAgICJkaXN0b3J0
+            aW9uX21peCI6IDEsDQogICAgImRpc3RvcnRpb25fb24iOiAwLA0KICAgICJkaXN0b3J0aW9uX3R5cGUiOiAwLA0KICAgICJmaWxfYXR0YWNrIjogMCwNCiAgICAiZmls
+            X2RlY2F5IjogMS41LA0KICAgICJmaWxfZW52X2RlcHRoIjogMCwNCiAgICAiZmlsX3JlbGVhc2UiOiAxLjUsDQogICAgImZpbF9zdXN0YWluIjogMC41LA0KICAgICJm
+            aWx0ZXJfYmxlbmQiOiAwLA0KICAgICJmaWx0ZXJfZHJpdmUiOiAwLA0KICAgICJmaWx0ZXJfb24iOiAwLA0KICAgICJmaWx0ZXJfc2hlbGYiOiAwLA0KICAgICJmaWx0
+            ZXJfc3R5bGUiOiAwLA0KICAgICJmb3JtYW50X29uIjogMCwNCiAgICAiZm9ybWFudF94IjogMC41LA0KICAgICJmb3JtYW50X3kiOiAwLjUsDQogICAgImtleXRyYWNr
+            IjogMCwNCiAgICAibGVnYXRvIjogMCwNCiAgICAibW9kX2F0dGFjayI6IDAsDQogICAgIm1vZF9kZWNheSI6IDEuNSwNCiAgICAibW9kX3JlbGVhc2UiOiAxLjUsDQog
+            ICAgIm1vZF9zdXN0YWluIjogMC41LA0KICAgICJtb25vX2xmb18xX2FtcGxpdHVkZSI6IDEsDQogICAgIm1vbm9fbGZvXzFfZnJlcXVlbmN5IjogMS4wMDAwMDUwMDY3
+            OTAxNjExMzI4LA0KICAgICJtb25vX2xmb18xX3JldHJpZ2dlciI6IDIsDQogICAgIm1vbm9fbGZvXzFfc3luYyI6IDEsDQogICAgIm1vbm9fbGZvXzFfdGVtcG8iOiA2
+            LA0KICAgICJtb25vX2xmb18xX3dhdmVmb3JtIjogMCwNCiAgICAibW9ub19sZm9fMl9hbXBsaXR1ZGUiOiAxLA0KICAgICJtb25vX2xmb18yX2ZyZXF1ZW5jeSI6IDEu
+            MDAwMDA1MDA2NzkwMTYxMTMyOCwNCiAgICAibW9ub19sZm9fMl9yZXRyaWdnZXIiOiAyLA0KICAgICJtb25vX2xmb18yX3N5bmMiOiAxLA0KICAgICJtb25vX2xmb18y
+            X3RlbXBvIjogNywNCiAgICAibW9ub19sZm9fMl93YXZlZm9ybSI6IDAsDQogICAgIm5vaXNlX3ZvbHVtZSI6IDAuMTEyOTAzMjIyNDQxNjczMjc4ODEsDQogICAgIm51
+            bV9zdGVwcyI6IDgsDQogICAgIm9zY18xX3RyYW5zcG9zZSI6IDAsDQogICAgIm9zY18xX3R1bmUiOiAwLA0KICAgICJvc2NfMV91bmlzb25fZGV0dW5lIjogMTAsDQog
+            ICAgIm9zY18xX3VuaXNvbl92b2ljZXMiOiAxLA0KICAgICJvc2NfMV92b2x1bWUiOiAwLjQ3NDk5OTk5NDAzOTUzNTUyMjQ2LA0KICAgICJvc2NfMV93YXZlZm9ybSI6
+            IDAsDQogICAgIm9zY18yX3RyYW5zcG9zZSI6IDAsDQogICAgIm9zY18yX3R1bmUiOiAwLjExNzE4NzUsDQogICAgIm9zY18yX3VuaXNvbl9kZXR1bmUiOiAxMCwNCiAg
+            ICAib3NjXzJfdW5pc29uX3ZvaWNlcyI6IDEsDQogICAgIm9zY18yX3ZvbHVtZSI6IDAuNDI1MDAwMDExOTIwOTI4OTU1MDgsDQogICAgIm9zY18yX3dhdmVmb3JtIjog
+            OCwNCiAgICAib3NjX2ZlZWRiYWNrX2Ftb3VudCI6IDAsDQogICAgIm9zY19mZWVkYmFja190cmFuc3Bvc2UiOiAwLA0KICAgICJvc2NfZmVlZGJhY2tfdHVuZSI6IDAs
+            DQogICAgInBpdGNoX2JlbmRfcmFuZ2UiOiAyLA0KICAgICJwb2x5X2xmb19hbXBsaXR1ZGUiOiAxLA0KICAgICJwb2x5X2xmb19mcmVxdWVuY3kiOiAxLjAwMDAwNTAw
+            Njc5MDE2MTEzMjgsDQogICAgInBvbHlfbGZvX3N5bmMiOiAxLA0KICAgICJwb2x5X2xmb190ZW1wbyI6IDcsDQogICAgInBvbHlfbGZvX3dhdmVmb3JtIjogMCwNCiAg
+            ICAicG9seXBob255IjogNCwNCiAgICAicG9ydGFtZW50byI6IC03LA0KICAgICJwb3J0YW1lbnRvX3R5cGUiOiAwLA0KICAgICJyZXNvbmFuY2UiOiAwLjUsDQogICAg
+            InJldmVyYl9kYW1waW5nIjogMC41LA0KICAgICJyZXZlcmJfZHJ5X3dldCI6IDAuNSwNCiAgICAicmV2ZXJiX2ZlZWRiYWNrIjogMC45MDAwMDAwMDAwMDAwMDAwMjIy
+            LA0KICAgICJyZXZlcmJfb24iOiAwLA0KICAgICJzdGVwX2ZyZXF1ZW5jeSI6IDIuMDAwMDAzODE0Njk3MjY1NjI1LA0KICAgICJzdGVwX3NlcV8wMCI6IDAsDQogICAg
+            InN0ZXBfc2VxXzAxIjogMCwNCiAgICAic3RlcF9zZXFfMDIiOiAwLA0KICAgICJzdGVwX3NlcV8wMyI6IDAsDQogICAgInN0ZXBfc2VxXzA0IjogMCwNCiAgICAic3Rl
+            cF9zZXFfMDUiOiAwLA0KICAgICJzdGVwX3NlcV8wNiI6IDAsDQogICAgInN0ZXBfc2VxXzA3IjogMCwNCiAgICAic3RlcF9zZXFfMDgiOiAwLA0KICAgICJzdGVwX3Nl
+            cV8wOSI6IDAsDQogICAgInN0ZXBfc2VxXzEwIjogMCwNCiAgICAic3RlcF9zZXFfMTEiOiAwLA0KICAgICJzdGVwX3NlcV8xMiI6IDAsDQogICAgInN0ZXBfc2VxXzEz
+            IjogMCwNCiAgICAic3RlcF9zZXFfMTQiOiAwLA0KICAgICJzdGVwX3NlcV8xNSI6IDAsDQogICAgInN0ZXBfc2VxXzE2IjogMCwNCiAgICAic3RlcF9zZXFfMTciOiAw
+            LA0KICAgICJzdGVwX3NlcV8xOCI6IDAsDQogICAgInN0ZXBfc2VxXzE5IjogMCwNCiAgICAic3RlcF9zZXFfMjAiOiAwLA0KICAgICJzdGVwX3NlcV8yMSI6IDAsDQog
+            ICAgInN0ZXBfc2VxXzIyIjogMCwNCiAgICAic3RlcF9zZXFfMjMiOiAwLA0KICAgICJzdGVwX3NlcV8yNCI6IDAsDQogICAgInN0ZXBfc2VxXzI1IjogMCwNCiAgICAi
+            c3RlcF9zZXFfMjYiOiAwLA0KICAgICJzdGVwX3NlcV8yNyI6IDAsDQogICAgInN0ZXBfc2VxXzI4IjogMCwNCiAgICAic3RlcF9zZXFfMjkiOiAwLA0KICAgICJzdGVw
+            X3NlcV8zMCI6IDAsDQogICAgInN0ZXBfc2VxXzMxIjogMCwNCiAgICAic3RlcF9zZXF1ZW5jZXJfcmV0cmlnZ2VyIjogMiwNCiAgICAic3RlcF9zZXF1ZW5jZXJfc3lu
+            YyI6IDEsDQogICAgInN0ZXBfc2VxdWVuY2VyX3RlbXBvIjogNywNCiAgICAic3RlcF9zbW9vdGhpbmciOiAwLA0KICAgICJzdHV0dGVyX2ZyZXF1ZW5jeSI6IDIuOTk5
+            OTk2OTAwNTU4NDcxNjc5NywNCiAgICAic3R1dHRlcl9vbiI6IDAsDQogICAgInN0dXR0ZXJfcmVzYW1wbGVfZnJlcXVlbmN5IjogMS4wMDAwMDI4NjEwMjI5NDkyMTg4
+            LA0KICAgICJzdHV0dGVyX3Jlc2FtcGxlX3N5bmMiOiAxLA0KICAgICJzdHV0dGVyX3Jlc2FtcGxlX3RlbXBvIjogNiwNCiAgICAic3R1dHRlcl9zb2Z0bmVzcyI6IDAu
+            MjAwMDAwMDAwMDAwMDAwMDExMSwNCiAgICAic3R1dHRlcl9zeW5jIjogMSwNCiAgICAic3R1dHRlcl90ZW1wbyI6IDgsDQogICAgInN1Yl9vY3RhdmUiOiAwLA0KICAg
+            ICJzdWJfc2h1ZmZsZSI6IDAuNDg3NTYyNTI5ODAyMzIyMzk3NDcsDQogICAgInN1Yl92b2x1bWUiOiAwLjY2MDAwMDAyNjIyNjA0MzcwMTE3LA0KICAgICJzdWJfd2F2
+            ZWZvcm0iOiAxLA0KICAgICJ1bmlzb25fMV9oYXJtb25pemUiOiAwLA0KICAgICJ1bmlzb25fMl9oYXJtb25pemUiOiAwLA0KICAgICJ2ZWxvY2l0eV90cmFjayI6IDAs
+            DQogICAgInZvbHVtZSI6IDAuNzA3MTA2MTczMDM4NDgyNjY2MDIsDQogICAgIm1vZHVsYXRpb25zIjogW10NCiAgfQ0KfQA=
+          >
+        >
+      >
+      FLOATPOS 0 0 0 0
+      FXID {55F1AEFF-2EE2-65B6-632F-17375E62FA93}
+      <PARMENV 134:_sub_volume 0 1 0.5
+        EGUID {009CD0D1-DCE0-18A5-C6DA-4B627BF3B11C}
+        ACT 1 -1
+        VIS 1 1 1
+        LANEHEIGHT 0 0
+        ARM 1
+        DEFSHAPE 0 -1 -1
+        PT 0 0.66 0
+        PT 5.5 0.645 0
+        PT 13.5 0.34665826 0 0 1
+      >
+      <PARMENV 68:_osc_2_volume 0 1 0.5
+        EGUID {78253062-83AD-CE1B-D34E-7341B732F84C}
+        ACT 1 -1
+        VIS 1 1 1
+        LANEHEIGHT 0 0
+        ARM 1
+        DEFSHAPE 0 -1 -1
+        PT 0 0.425 0
+        PT 14.5 0.66 0 0 1
+        PT 20.5 0.44803175 0
+      >
+      <PARMENV 62:_osc_1_volume 0 1 0.5
+        EGUID {46A18534-9F91-6304-A261-71315FAF14F5}
+        ACT 1 -1
+        VIS 1 1 1
+        LANEHEIGHT 0 0
+        ARM 1
+        DEFSHAPE 0 -1 -1
+        PT 0 0.475 0
+        PT 13.5 0.31 0 0 1
+        PT 20.5 0.66984626 0
+      >
+      WAK 0 0
+    >
+    <ITEM
+      POSITION 0
+      SNAPOFFS 0
+      LENGTH 33
+      LOOP 1
+      ALLTAKES 0
+      FADEIN 1 0 0 1 0 0 0
+      FADEOUT 1 0 0 1 0 0 0
+      MUTE 0 0
+      SEL 0
+      IGUID {9A3D0392-998F-5DC7-ED8E-86E0864AC6AC}
+      IID 1
+      NAME "01-Helm-Recorded MIDI"
+      VOLPAN 1 0 1 -1
+      SOFFS 0 0
+      PLAYRATE 1 1 0 -1 0 0.0025
+      CHANMODE 0
+      GUID {F860611E-7126-C1DC-BDA3-FF584237E528}
+      RECPASS 1
+      <SOURCE MIDI
+        HASDATA 1 960 QN
+        CCINTERP 32
+        POOLEDEVTS {2339D582-717E-60C4-D1C5-54BE1CB15F56}
+        E 0 90 24 7f
+        E 480 80 24 00
+        E 1440 90 25 7f
+        E 480 80 25 00
+        E 1440 90 26 7f
+        E 480 80 26 00
+        E 1440 90 27 7f
+        E 480 80 27 00
+        E 1440 90 28 7f
+        E 480 80 28 00
+        E 1440 90 29 7f
+        E 480 80 29 00
+        E 1440 90 2a 7f
+        E 480 80 2a 00
+        E 1440 90 2b 7f
+        E 480 80 2b 00
+        E 1440 90 2c 7f
+        E 480 80 2c 00
+        E 1440 90 2d 7f
+        E 480 80 2d 00
+        E 1440 90 2e 7f
+        E 480 80 2e 00
+        E 1440 90 2f 7f
+        E 480 80 2f 00
+        E 1440 90 30 7f
+        E 480 80 30 00
+        E 1440 90 31 7f
+        E 480 80 31 00
+        E 1440 90 32 7f
+        E 480 80 32 00
+        E 1440 90 33 7f
+        E 480 80 33 00
+        E 1440 90 34 7f
+        E 480 80 34 00
+        E 1440 90 35 7f
+        E 480 80 35 00
+        E 1440 90 36 7f
+        E 480 80 36 00
+        E 1440 90 37 7f
+        E 480 80 37 00
+        E 1440 90 38 7f
+        E 480 80 38 00
+        E 1440 90 39 7f
+        E 480 80 39 00
+        E 1440 90 3a 7f
+        E 480 80 3a 00
+        E 1440 90 3b 7f
+        E 480 80 3b 00
+        E 1440 90 3c 7f
+        E 480 80 3c 00
+        E 1440 90 3d 7f
+        E 480 80 3d 00
+        E 1440 90 3e 7f
+        E 480 80 3e 00
+        E 1440 90 3f 7f
+        E 480 80 3f 00
+        E 1440 90 40 7f
+        E 480 80 40 00
+        E 1440 90 41 7f
+        E 480 80 41 00
+        E 1440 90 42 7f
+        E 480 80 42 00
+        E 1440 90 43 7f
+        E 480 80 43 00
+        e 1440 90 44 7f
+        e 480 80 44 00
+        E 3360 b0 7b 00
+        CCINTERP 32
+        CHASE_CC_TAKEOFFS 1
+        GUID {3F0DE8BF-EBE3-2D19-5148-84702B651019}
+        IGNTEMPO 0 120 4 4
+        SRCCOLOR 10
+        VELLANE -1 100 0
+        CFGEDITVIEW 34330.395028 0.032239 56 12 0 -1 0 0 0 0.5
+        KEYSNAP 0
+        TRACKSEL 0
+        EVTFILTER 0 -1 -1 -1 -1 0 0 0 0 -1 -1 -1 -1 0 -1 0 -1 -1
+        CFGEDIT 1 1 0 1 0 0 1 1 1 1 1 0.5 168 29 1557 1052 0 0 0 0 0 0 0 0 0 0.5 0 0 1 64
+      >
+    >
+  >
+>
