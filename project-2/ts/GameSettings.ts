@@ -17,7 +17,7 @@ const SETTINGS = {
   lights: {
     directional: {
       color: 0xffffff,
-      intensity: 0.6,
+      intensity: 0.5,
       position: {
         x: -4,
         y: 5,
@@ -26,7 +26,7 @@ const SETTINGS = {
     },
     ambient: {
       color: 0xffffff,
-      intensity: 0.4,
+      intensity: 0.5,
     },
   },
   player: {
@@ -38,6 +38,7 @@ const SETTINGS = {
   },
   oscinoodles: {
     colors: [
+      0xb9d8c2,
       0x9ac2c9,
       0x8aa1b1,
       0x4a5043,
@@ -52,6 +53,9 @@ const SETTINGS = {
     positionalAudio: {
       refDistance: 5,
     },
+    mouthSize: 0.05,
+    mouthGrow: 2,
+    mouthSpeed: 6,
   },
 };
 
