@@ -37,7 +37,13 @@ const SETTINGS = {
     minInteractionDistance: 0.05,
   },
   oscinoodles: {
-    color: 0x3abaef,
+    colors: [
+      0x9ac2c9,
+      0x8aa1b1,
+      0x4a5043,
+      0xffcb47,
+      0xff595e,
+    ],
     radius: 0.2,
     maxSwing: 20,
     minSegments: 1,

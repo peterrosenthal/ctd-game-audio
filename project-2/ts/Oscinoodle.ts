@@ -43,7 +43,7 @@ export default class Oscinoodle {
       32,
     );
     this.material = new THREE.MeshPhysicalMaterial({
-      color: SETTINGS.oscinoodles.color,
+      color: SETTINGS.oscinoodles.colors[Math.floor(Math.random() * SETTINGS.oscinoodles.colors.length)],
     });
 
     this.meshes = [];
@@ -131,7 +131,7 @@ export default class Oscinoodle {
   setSwing(plane: THREE.Vector3, displacement: number): void {
     this.swingPlane = plane;
     this.maxSwingDisplacement = displacement;
-    this.swingPeriod = Math.abs(this.maxSwingDisplacement * this.meshes.length / 3);
+    this.swingPeriod = Math.abs(this.maxSwingDisplacement * Math.sqrt(this.meshes.length) / 3);
     this.swingTime = 0;
     this.swing(this.maxSwingDisplacement);
   }
