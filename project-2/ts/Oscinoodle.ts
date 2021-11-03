@@ -167,8 +167,16 @@ export default class Oscinoodle {
   }
 
   popSegment(): void {
+    for (const eye of this.eyes) {
+      eye.removeFromParent();
+    }
+    this.mouth.removeFromParent();
     const mesh = this.meshes.pop();
     mesh?.removeFromParent();
+    for (const eye of this.eyes) {
+      this.meshes[this.meshes.length - 1].add(eye);
+    }
+    this.meshes[this.meshes.length - 1].add(this.mouth);
 
     this.setSoundFileOffset();
   }
