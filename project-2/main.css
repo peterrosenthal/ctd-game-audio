@@ -32,6 +32,13 @@ body {
   cursor: pointer;
 }
 
+h1 {
+  font-size: 3.3em;
+  font-family: 'Zen Kurenaido', sans-serif;
+  color: lightgray;
+  font-weight: 500;
+}
+
 p {
   font-size: 1.2em;
   font-family: 'Zen Kurenaido', sans-serif;
