@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import SETTINGS from './GameSettings';
+import Ground from './Ground';
 import Lights from './Lights';
 import PlayerController from './PlayerController';
 import Skybox from './Skybox';
@@ -12,6 +13,7 @@ export default class GameManager {
 
   skybox!: Skybox;
   lights!: Lights;
+  ground!: Ground;
   player!: PlayerController;
 
   time: number;

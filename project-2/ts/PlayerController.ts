@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 import Oscinoodle from './Oscinoodle';
 import SETTINGS from './GameSettings';
+import Ground from './Ground';
 
 interface MovementState {
   forward: boolean;
@@ -43,6 +44,8 @@ export default class PlayerController {
 
   oscinoodles!: Oscinoodle[];
   activeObject?: OscinoodleInfo;
+
+  ground!: Ground;
 
   constructor(
     scene: THREE.Scene,
@@ -106,6 +109,9 @@ export default class PlayerController {
 
     // add audio listener to camera
     this.camera.add(this.listener);
+
+    // add the ground object to scroll beneath the player
+    this.ground = new Ground(this.scene, this.camera);
   }
 
   update(delta: number): void {
@@ -165,6 +171,9 @@ export default class PlayerController {
       for (const noodle of this.oscinoodles) {
         noodle.update(delta);
       }
+
+      // syncronize the ground to the player
+      this.ground.scrollTexture();
     }
   }
 
@@ -281,10 +290,14 @@ export default class PlayerController {
           const dist = 5 * Math.sin(Math.PI / 2 + theta) /
             (Math.cos(Math.PI / 2 + theta) * this.camera.position.y);
           // using x and z from the dir vector, translate intersection distance to actual position of intersection
-          const pos = new THREE.Vector3(dir.x, 0, dir.z)
-            .normalize()
-            .multiplyScalar(dist)
-            .add(new THREE.Vector3(this.camera.position.x, 0, this.camera.position.z));
+          const pos = new THREE.Vector3(dir.x, 0, dir.z);
+          pos.normalize();
+          pos.multiplyScalar(dist);
+          pos.add(new THREE.Vector3(
+            this.camera.position.x,
+            SETTINGS.oscinoodles.segmentHeight / 2,
+            this.camera.position.z,
+          ));
 
           // instantiate new oscinoodle (previously know as bouncy boi) at the detected position
           const newdle = new Oscinoodle(this.scene, this.listener, pos);

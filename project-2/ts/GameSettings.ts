@@ -17,7 +17,7 @@ const SETTINGS = {
   lights: {
     directional: {
       color: 0xffffff,
-      intensity: 0.8,
+      intensity: 0.6,
       position: {
         x: -4,
         y: 5,
@@ -26,7 +26,7 @@ const SETTINGS = {
     },
     ambient: {
       color: 0xffffff,
-      intensity: 0.2,
+      intensity: 0.4,
     },
   },
   player: {
@@ -41,7 +41,7 @@ const SETTINGS = {
     maxSegments: 32,
     segmentHeight: 0.22,
     positionalAudio: {
-      refDistance: 1,
+      refDistance: 5,
     },
   },
 };

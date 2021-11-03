@@ -12,7 +12,7 @@ export default class Skybox {
     this.renderer = renderer;
 
     // bind event functions
-    this.textureLoaded = this.textureLoaded.bind(this);
+    this.onTextureLoaded = this.onTextureLoaded.bind(this);
 
     // rest of object initialization
     this.init();
@@ -20,14 +20,14 @@ export default class Skybox {
 
   init(): void {
     this.texture = new THREE.TextureLoader().load(
-      '../img/skybox.png',
-      this.textureLoaded,
+      '../textures/skybox.png',
+      this.onTextureLoaded,
       undefined,
-      (error) => { console.log(error); },
+      (error) => { console.error(error); },
     );
   }
 
-  textureLoaded(): void {
+  onTextureLoaded(): void {
     const renderTarget = new THREE.WebGLCubeRenderTarget(this.texture.image.height);
     renderTarget.fromEquirectangularTexture(this.renderer, this.texture);
     this.scene.background = renderTarget.texture;
