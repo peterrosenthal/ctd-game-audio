@@ -46,6 +46,7 @@ export default class PlayerController {
   activeObject?: OscinoodleInfo;
 
   ground!: Ground;
+  intersectionPlane!: THREE.Mesh;
 
   constructor(
     scene: THREE.Scene,
@@ -112,6 +113,13 @@ export default class PlayerController {
 
     // add the ground object to scroll beneath the player
     this.ground = new Ground(this.scene, this.camera);
+
+    // set up the intersection plane to be moved around and used when needed later
+    const geometry = new THREE.PlaneGeometry(1000, 1000);
+    const material = new THREE.MeshBasicMaterial();
+    this.intersectionPlane = new THREE.Mesh(geometry, material);
+    this.scene.add(this.intersectionPlane);
+    this.intersectionPlane.visible = false;
   }
 
   update(delta: number): void {
@@ -146,24 +154,34 @@ export default class PlayerController {
       if (this.dragging && this.activeObject !== undefined) {
         // get vector representing 3d direction the camera is facing
         const dir = this.camera.getWorldDirection(new THREE.Vector3());
-        // get the relative angle between dir vector and action plane
-        const theta = Math.asin(dir.dot(this.activeObject.plane));
-        if (this.activeObject.action === ActionType.SIZE) {
-          // approximate the height that the mouse has been dragged up from the ground
-          let height = (1 + this.activeObject.distance * Math.tan(theta - this.activeObject.angle)) / 2;
-          // bit of a hack to fix bad math...
-          if (theta - this.activeObject.angle > 0
-            && Math.tan(theta - this.activeObject.angle) < 0) {
-            // set height to a big-enough "default maximum" or something like that
-            height = 700;
+        this.raycaster.setFromCamera(new THREE.Vector2(), this.camera);
+        let theta = Math.atan(dir.z / dir.x);
+        if (dir.x <= 0) {
+          theta += Math.PI;
+        }
+        if (dir.x > 0 && dir.z <= 0) {
+          theta += 2 * Math.PI;
+        }
+        theta = 3 * Math.PI / 2 - theta;
+        this.intersectionPlane.rotation.y = theta;
+        this.intersectionPlane.position.copy(this.activeObject.oscinoodle.position);
+        const intersections = this.raycaster.intersectObject(this.intersectionPlane);
+        if (intersections.length > 0) {
+          if (this.activeObject.action === ActionType.SIZE) {
+              const height = intersections[0].point.y - this.activeObject.oscinoodle.position.y;
+              this.activeObject.oscinoodle.setHeight(height);
+          } else if (this.activeObject.action === ActionType.TIME) {
+            let displacement = (intersections[0].point.distanceTo(
+              this.activeObject.oscinoodle.position) - intersections[0].point.y);
+            displacement = Math.min(displacement, SETTINGS.oscinoodles.maxSwing);
+            // get the relative angle between dir vector and action plane
+            const theta = Math.asin(dir.dot(this.activeObject.plane));
+            displacement *= Math.sign(theta);
+            this.activeObject.oscinoodle.setSwing(
+              this.activeObject.plane,
+              displacement,
+            );
           }
-          this.activeObject.oscinoodle.setHeight(height);
-        } else if (this.activeObject.action === ActionType.TIME) {
-          this.activeObject.oscinoodle.setSwing(
-            this.activeObject.plane,
-            theta * 1.5,
-            this.activeObject.distance,
-          );
         }
       }
 
@@ -254,61 +272,59 @@ export default class PlayerController {
         // existing oscinoodles before we try creating a new one
         this.raycaster.setFromCamera(new THREE.Vector2(), this.camera);
         for (const noodle of this.oscinoodles) {
-          if (this.raycaster.intersectObjects(noodle.meshes).length > 0) {
+          const noodleIntersections = this.raycaster.intersectObjects(noodle.meshes);
+          if (noodleIntersections.length > 0) {
             // get the distance to the bottom of the noodle
             const dist = this.camera.position.distanceTo(noodle.position);
+            
+            if (dist <= SETTINGS.player.maxInteractionDistance &&
+              dist >= SETTINGS.player.minInteractionDistance) {
+              // multi-step process to get the angle the camera would be at if it were to be looking at the bottom of the noodle
+              // step 1: create a ray looking at the bootom of the noodle
+              const ray = new THREE.Ray(this.camera.position, new THREE.Vector3());
+              ray.lookAt(noodle.position);
+              // step 2: get vector representing 3d direction of the ray to the bottom of the noodle
+              const dir = new THREE.Vector3().copy(ray.direction).normalize();
+              // step 3: get the relative angle between dir vector and the x-z plane
+              const theta = Math.asin(dir.dot(plane));
 
-            // multi-step process to get the angle the camera would be at if it were to be looking at the bottom of the noodle
-            // step 1: create a ray looking at the bootom of the noodle
-            const ray = new THREE.Ray(this.camera.position, new THREE.Vector3());
-            ray.lookAt(noodle.position);
-            // step 2: get vector representing 3d direction of the ray to the bottom of the noodle
-            const dir = new THREE.Vector3().copy(ray.direction).normalize();
-            // step 3: get the relative angle between dir vector and the x-z plane
-            const theta = Math.asin(dir.dot(plane));
-
-            // keep track of some of the object's info while dragging the mouse
-            this.activeObject = {
-              oscinoodle: noodle,
-              distance: dist,
-              angle: theta,
-              plane: plane,
-              action: ActionType.SIZE,
-            };
-            // return so that we skip over all of the code that would handle creating a new noodle
-            return;
+              // keep track of some of the object's info while dragging the mouse
+              this.activeObject = {
+                oscinoodle: noodle,
+                distance: dist,
+                angle: theta,
+                plane: plane,
+                action: ActionType.SIZE,
+              };
+              // return so that we skip over all of the code that would handle creating a new noodle
+              return;
+            }
           }
         }
+
 
         // get vector representing 3d direction the camera is facing
         const dir = this.camera.getWorldDirection(new THREE.Vector3());
         // get the relative angle between dir vector and x-z plane
         const theta = Math.asin(dir.dot(plane));
-        if (theta < -Math.PI / 16) {
-          // if we are looking sufficiently down enough, then using basic trig, calculate the
-          // distance at which a ray projected from the camera intersects with the x-z plane (y = 0)
-          const dist = 5 * Math.sin(Math.PI / 2 + theta) /
-            (Math.cos(Math.PI / 2 + theta) * this.camera.position.y);
-          // using x and z from the dir vector, translate intersection distance to actual position of intersection
-          const pos = new THREE.Vector3(dir.x, 0, dir.z);
-          pos.normalize();
-          pos.multiplyScalar(dist);
-          pos.add(new THREE.Vector3(
-            this.camera.position.x,
-            SETTINGS.oscinoodles.segmentHeight / 2,
-            this.camera.position.z,
-          ));
-
-          // instantiate new oscinoodle (previously know as bouncy boi) at the detected position
-          const newdle = new Oscinoodle(this.scene, this.listener, pos);
-          this.oscinoodles.push(newdle);
-          this.activeObject = {
-            oscinoodle: newdle,
-            distance: dist,
-            angle: theta,
-            plane: plane,
-            action: ActionType.SIZE,
-          };
+        // check intersections with the ground using the raycaster
+        if (this.ground.mesh !== undefined) {
+          const groundIntersections = this.raycaster.intersectObject(this.ground.mesh);
+          if (groundIntersections.length > 0) {
+            const dist = groundIntersections[0].distance;
+            if (dist <= SETTINGS.player.maxInteractionDistance &&
+              dist >= SETTINGS.player.minInteractionDistance + this.camera.position.y) {
+              const newdle = new Oscinoodle(this.scene, this.listener, groundIntersections[0].point);
+              this.oscinoodles.push(newdle);
+              this.activeObject = {
+                oscinoodle: newdle,
+                distance: dist,
+                angle: theta,
+                plane: plane,
+                action: ActionType.SIZE,
+              }
+            }
+          }
         }
       }
     } else if (event.button === 2) {

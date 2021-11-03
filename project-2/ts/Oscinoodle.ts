@@ -11,10 +11,8 @@ export default class Oscinoodle {
   meshes!: THREE.Mesh[];
 
   swingPlane!: THREE.Vector3;
-  maxSwingAngle!: number;
   maxSwingDisplacement!: number;
   swingPeriod!: number;
-  swingDistance!: number;
   swingTime!: number;
 
   sound!: THREE.PositionalAudio;
@@ -66,7 +64,7 @@ export default class Oscinoodle {
   }
 
   update(delta: number): void {
-    if (this.maxSwingAngle !== 0) {
+    if (this.maxSwingDisplacement !== 0) {
       let t = this.swingTime % (this.swingPeriod * 2);
       if (t > 0 && t < this.swingPeriod && !this.firstNoteTriggered) {
         if (this.sound.isPlaying) {
@@ -88,13 +86,13 @@ export default class Oscinoodle {
         t = 2 * this.swingPeriod - t;
       }
       t /= this.swingPeriod;
-      this.swing(THREE.MathUtils.lerp(this.maxSwingAngle, -this.maxSwingAngle, t));
+      this.swing(THREE.MathUtils.lerp(this.maxSwingDisplacement, -this.maxSwingDisplacement, t));
       this.swingTime += delta;
     }
   }
 
   pushSegment(): void {
-    this.setSwing(new THREE.Vector3(1, 1, 1), 0, 1);
+    this.setSwing(new THREE.Vector3(1, 1, 1), 0);
 
     const mesh = new THREE.Mesh(this.geometry, this.material);
     mesh.scale.y = SETTINGS.oscinoodles.segmentHeight;
@@ -130,34 +128,35 @@ export default class Oscinoodle {
     }
   }
 
-  setSwing(plane: THREE.Vector3, angle: number, distance: number): void {
+  setSwing(plane: THREE.Vector3, displacement: number): void {
     this.swingPlane = plane;
-    this.maxSwingAngle = angle;
-    this.maxSwingDisplacement = 0.55 * angle * Math.sqrt(Math.sqrt(distance));
+    this.maxSwingDisplacement = displacement;
     this.swingPeriod = Math.abs(this.maxSwingDisplacement * this.meshes.length / 3);
-    this.swingDistance = distance;
     this.swingTime = 0;
-    this.swing(this.maxSwingAngle);
+    this.swing(this.maxSwingDisplacement);
   }
 
-  swing(angle: number): void {
-    let displacement = 0.55 * angle * Math.sqrt(Math.sqrt(this.swingDistance));
+  swing(displacement: number): void {
     let theta = Math.atan(this.swingPlane.z / this.swingPlane.x);
     if (this.swingPlane.x <= 0) {
       theta += Math.PI;
     }
-    if (this.swingPlane.x >= 0 && this.swingPlane.z <= 0) {
+    if (this.swingPlane.x > 0 && this.swingPlane.z <= 0) {
       theta += 2 * Math.PI;
     }
     for (let i = 0; i < this.meshes.length; i++) {
       const mesh = this.meshes[i];
       mesh.position.set(
         this.position.x + (i / this.meshes.length) * (i / this.meshes.length) * displacement * Math.cos(theta),
-        this.position.y + i * SETTINGS.oscinoodles.segmentHeight * Math.cos(Math.sign(angle) * Math.sqrt(Math.abs(angle / 2))),
+        this.position.y + i * SETTINGS.oscinoodles.segmentHeight - (i / this.meshes.length) * (i / this.meshes.length) * Math.abs(displacement) / 2,
         this.position.z + (i / this.meshes.length) * (i / this.meshes.length) * displacement * Math.sin(theta),
       );
       mesh.rotation.y = 2 * Math.PI - theta;
-      mesh.rotation.z = -angle * (i / this.meshes.length);
+      if (i > 0) {
+        mesh.rotation.z = -Math.atan((((i / this.meshes.length) * (i / this.meshes.length) -
+          ((i - 1) / this.meshes.length) * ((i - 1) / this.meshes.length)) * displacement) /
+          (i / this.meshes.length - (i - 1) / this.meshes.length)) / 1.5;
+      }
     }
   }
 

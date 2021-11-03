@@ -33,13 +33,16 @@ const SETTINGS = {
     acceleration: 35,
     deacceleration: 17,
     maxSpeed: 13,
+    maxInteractionDistance: 25,
+    minInteractionDistance: 0.05,
   },
   oscinoodles: {
     color: 0x3abaef,
-    radius: 0.25,
+    radius: 0.2,
+    maxSwing: 20,
     minSegments: 1,
     maxSegments: 32,
-    segmentHeight: 0.22,
+    segmentHeight: 0.2,
     positionalAudio: {
       refDistance: 5,
     },
