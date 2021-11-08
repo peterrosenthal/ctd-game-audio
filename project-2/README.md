@@ -13,7 +13,7 @@ On top of the core interaction loop, I want at least one additional "setting" su
 #### Extras
 Even though I'm *supposed* to not pressure myself to include things above and beyond the MVP, there's a lot of stuff that I just really want to include as well:
 
-The graphics are absolutely not essential to the MVP of this class; it's a sound class not a graphics class. But I would love for this project to look really nice, so if I have the time to, you know I'm gunsta be making it look pretty.
+The graphics are absolutely not essential to the MVP of this class; it's a sound class not a graphics class. But I would love for this project to look really nice, so if I have the time to, you know I'm gons'to be making it look pretty.
 
 There are also a bunch of "settings" that I'd like to include that the player can change about the next noodle thing they will pull out of the ground. As mentioned earlier, I want to pick at least one of these to make it in to the MVP, and any more than that are extras:
 
@@ -38,7 +38,7 @@ One of the more challenging things for me to learn was developing my own first p
 
 Another big challenge I had to overcome this week was the act of finding out where in the world click events were happening. With no built in physics engine, I had a couple of options, adding invisible objects to the world and using the built in THREE.js raycasting support, or do some good old vector math and trigonometry. I'm like 99% sure the latter would be more performant, so despite the extra challenge, that's the option I went with.
 
-I wanted to have a cylinder coming out of the ground at the location of the click, but I didn't end up having enough time to finish implementing that this week as I have a lot of other projects going on at the same time too. So so far I have just a basic test cube moving around to the location of the click. The screenshot following screenshot shows how the game looks at this stage:
+I wanted to have a cylinder coming out of the ground at the location of the click, but I didn't end up having enough time to finish implementing that this week as I have a lot of other projects going on at the same time too. So I have just a basic test cube so far, moving around to the location of the click. The screenshot following screenshot shows how the game looks at this stage:
 
 ![A screenshot of the game at the Week 2 stage, shows a cube in the center and a pause menu with instructions](process/week-2-screenshot.png)
 
