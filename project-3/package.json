@@ -1,0 +1,22 @@
+{
+  "name": "beat-greenhouse",
+  "version": "0.2.00",
+  "description": "Game/Experimental Interaction where songs are cultivated as plants in a greenhouse",
+  "main": "main.ts",
+  "scripts": {
+    "build": "esbuild ./ts/main.ts --bundle --minify --sourcemap --outfile=dist/bundle.js",
+    "serve": "npx http-server"
+  },
+  "author": "Peter Rosenthal",
+  "license": "GPL-3.0-or-later",
+  "devDependencies": {
+    "@magenta/music": "^1.23.1",
+    "@types/three": "^0.134.0",
+    "esbuild": "^0.13.15",
+    "eslint": "^8.3.0",
+    "http-server": "^14.0.0",
+    "three": "^0.134.0",
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.5.2"
+  }
+}
