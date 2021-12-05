@@ -1,16 +1,89 @@
 import * as mm from '@magenta/music/es6';
+import * as THREE from 'three';
+import Lights from './Lights';
+import Skybox from './Skybox';
+import Settings from './Settings';
 import Generator from './Generator';
+import Plant from './Plant';
 import { TWINKLE_FIRST_HALF, TWINKLE_SECOND_HALF } from './sequences';
 import { delay } from './utils';
 
+/**
+ * The GameManager is the main 'app' that houses all the essentials
+ * like the main animation loop and the initialization of all the subcomponents.
+ */
 export default class GameManager {
-  constructor() {
-    this.testGenerator();
+  private static sscene: THREE.Scene | null | undefined;
+  static getScene(): THREE.Scene {
+    if (this.sscene === null || this.sscene === undefined) {
+      this.sscene = new THREE.Scene();
+    }
+    return this.sscene;
   }
 
-  private async testGenerator() {
+  private static srenderer: THREE.WebGLRenderer | null | undefined;
+  static getRenderer(): THREE.WebGLRenderer {
+    if (this.srenderer === null || this.srenderer === undefined) {
+      this.srenderer = new THREE.WebGLRenderer();
+      this.srenderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(this.srenderer.domElement);
+    }
+    return this.srenderer;
+  }
+
+  private settings: Settings;
+
+  private scene: THREE.Scene;
+  private camera: THREE.PerspectiveCamera;
+  private renderer: THREE.WebGLRenderer;
+
+  private generator: Generator;
+
+  constructor() {
+    // get Settings instance
+    this.settings = Settings.getInstance();
+
+    // THREE scene
+    this.scene = GameManager.getScene();
+
+    // THREE camera
+    this.camera = new THREE.PerspectiveCamera(
+      this.settings.camera.fov,
+      window.innerWidth / window.innerHeight,
+      this.settings.camera.near,
+      this.settings.camera.far,
+    );
+    this.camera.position.set(
+      this.settings.camera.position.x,
+      this.settings.camera.position.y,
+      this.settings.camera.position.z,
+    );
+    this.camera.lookAt(
+      this.settings.camera.lookAt.x,
+      this.settings.camera.lookAt.y,
+      this.settings.camera.lookAt.z,
+    );
+
+    // THREE renderer
+    this.renderer = GameManager.getRenderer();
+
+    // THREE skybox
+    new Skybox();
+
+    // THREE lights
+    new Lights();
+
+    // test the magenta music generator
+    this.generator = new Generator();
+    this.testGenerator();
+
+    // start up THREE animation loop
+    this.animate = this.animate.bind(this);
+    requestAnimationFrame(this.animate);
+  }
+
+  private async testGenerator(): Promise<void> {
     const player = new mm.SoundFontPlayer('https://storage.googleapis.com/magentadata/js/soundfonts/salamander');
-    const generator = new Generator();
     async function playSequence(sequence: mm.INoteSequence): Promise<void> {
       if (player.isPlaying()) {
         player.stop();
@@ -23,20 +96,34 @@ export default class GameManager {
       }
       return;
     }
-    let parentA = TWINKLE_FIRST_HALF;
-    let parentB = TWINKLE_SECOND_HALF;
+    let parentA = new Plant(TWINKLE_FIRST_HALF);
+    parentA.moveToTheLeft();
+    let parentB = new Plant(TWINKLE_SECOND_HALF);
+    const plants: Plant[] = [];
+    plants.push(parentA);
+    plants.push(parentB);
     console.log('playing parent A');
-    await playSequence(parentA);
+    await playSequence(parentA.sequence);
     console.log('playing parent B');
-    await playSequence(parentB);
+    await playSequence(parentB.sequence);
     while (true) {
       console.log('generating new child');
-      const children = await generator.generateFromParents(parentA, parentB);
+      const children = await this.generator.generateFromParents(parentA, parentB);
+      for (let plant of plants) {
+        plant.moveToTheLeft();
+      }
       const child = children[0];
       console.log('playing child');
-      await playSequence(child);
+      await playSequence(child.sequence);
       parentA = parentB;
       parentB = child;
+      plants.push(child);
     }
+  }
+
+  private animate(): void {
+    requestAnimationFrame(this.animate);
+
+    this.renderer.render(this.scene, this.camera);
   }
 }

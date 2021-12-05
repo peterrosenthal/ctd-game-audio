@@ -1,7 +1,14 @@
 import * as mm from '@magenta/music/es6';
 import Settings from './Settings';
+import Plant from './Plant';
 import { getSkewedRandom } from './utils';
 
+/**
+ * Generates melodies that are like genetic children of two (specified)
+ * parent melodies using Google Magenta's MusicVAE. Then using the Plant
+ * class that I wrote, associates that melody with a plant. (note: all
+ * plant generation actually takes place in the Plant.ts class, not this one)
+ */
 export default class Generator {
   private settings: Settings;
 
@@ -23,16 +30,29 @@ export default class Generator {
     this.interpolationResolution = this.settings.generator.interpolationResolutuion;
   }
 
-  async generateFromParents(parentA: mm.INoteSequence, parentB: mm.INoteSequence): Promise<mm.INoteSequence[]> {
+  async generateFromParents(parentA: Plant, parentB: Plant): Promise<Plant[]> {
     this.checkSettingsForUpdates();
-    const children: mm.INoteSequence[] = [];
+    const children: Plant[] = [];
     for (let i = 0; i < this.numChildren; i++) {
       const parents: mm.INoteSequence[] = [];
       await this.mvae.initialize();
-      parents.push((await this.mvae.similar(parentA, 1, getSkewedRandom(0, 1, this.parentSimilaritySkew), this.parentSimilarityTemperature))[0]);
-      parents.push((await this.mvae.similar(parentB, 1, getSkewedRandom(0, 1, this.parentSimilaritySkew), this.parentSimilarityTemperature))[0]);
-      const results: mm.INoteSequence[] = await this.mvae.interpolate(parents, this.interpolationResolution);
-      children.push(results[Math.floor(getSkewedRandom(0, results.length, 1))]);
+      parents.push((await this.mvae.similar(
+        parentA.sequence,
+        1,
+        getSkewedRandom(0, 1, this.parentSimilaritySkew),
+        this.parentSimilarityTemperature,
+      ))[0]);
+      parents.push((await this.mvae.similar(
+        parentB.sequence,
+        1,
+        getSkewedRandom(0, 1, this.parentSimilaritySkew),
+        this.parentSimilarityTemperature,
+      ))[0]);
+      const results: mm.INoteSequence[] = await this.mvae.interpolate(
+        parents,
+        this.interpolationResolution,
+      );
+      children.push(new Plant(results[Math.floor(getSkewedRandom(0, results.length, 1))]));
     }
     return children;
   }
