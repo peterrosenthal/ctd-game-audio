@@ -38,7 +38,7 @@ export default class Settings {
   lights = {
     directional: {
       color: 0xfffffee,
-      intensity: 0.5,
+      intensity: 0.3,
       position: {
         x: 5,
         y: 7,
@@ -47,7 +47,7 @@ export default class Settings {
     },
     ambient: {
       color: 0xeeffff,
-      intensity: 0.5,
+      intensity: 0.7,
     },
   };
 

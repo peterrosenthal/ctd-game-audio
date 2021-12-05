@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import * as mm from '@magenta/music/es6';
 import GameManager from './GameManager';
 import Settings from './Settings';
+import { rampUpDownMod } from './utils';
+import { Vector3 } from 'three';
 
 /**
  * Generates a plant based on a note sequence
@@ -47,7 +49,7 @@ export default class Plant {
     let [value, index] = this.acquireValueFromData(data, 0);
     const stemThickness = Math.abs((value + 1) * 0.1) + 0.1;
     [value, index] = this.acquireValueFromData(data, index);
-    const stemTaper = Math.abs(value * 0.5) % 0.4 + 0.4;
+    const stemTaper = rampUpDownMod(Math.abs(value * 0.5), 0.4) + 0.4;
     [value, index] = this.acquireValueFromData(data, index);
     const stemHeight = Math.abs((value + 5) * 0.15) * 2.5 + 0.4;
     [value, index] = this.acquireValueFromData(data, index);
@@ -57,21 +59,21 @@ export default class Plant {
     [value, index] = this.acquireValueFromData(data, index);
     const stemHue = Math.floor(Math.abs(value * 200) % 360);
     [value, index] = this.acquireValueFromData(data, index);
-    const stemSat = Math.floor(Math.abs(value * 100) % 80 + 20);
+    const stemSat = Math.floor(rampUpDownMod(Math.abs(value * 100), 20) + 80);
     [value, index] = this.acquireValueFromData(data, index);
-    const stemLit = Math.floor(Math.abs(value * 100) % 60 + 40);
+    const stemLit = Math.floor(rampUpDownMod(Math.abs(value * 100), 35) + 45);
     [value, index] = this.acquireValueFromData(data, index);
-    const stemRough = Math.abs(value) % 1;
+    const stemRough = rampUpDownMod(Math.abs(value), 1);
     [value, index] = this.acquireValueFromData(data, index);
-    const stemMetal = Math.abs(value) % 1;
+    const stemMetal = rampUpDownMod(Math.abs(value) * 0.1, 0.2);
     [value, index] = this.acquireValueFromData(data, index);
-    const stemReflect = Math.abs(value) % 1;
+    const stemReflect = rampUpDownMod(Math.abs(value), 0.9);
     [value, index] = this.acquireValueFromData(data, index);
-    const stemClearcoat = Math.abs(value) % 1;
+    const stemClearcoat = rampUpDownMod(Math.abs(value), 1);
     [value, index] = this.acquireValueFromData(data, index);
-    const stemClearcoatRough = Math.abs(value) % 1;
+    const stemClearcoatRough = rampUpDownMod(Math.abs(value), 1);
     [value, index] = this.acquireValueFromData(data, index);
-    const stemLeanAmount = (value / 4) % (0.25 * Math.PI);
+    const stemLeanAmount = rampUpDownMod(value / 4, 0.25 * Math.PI);
     
     const stemGeometry = new THREE.CylinderGeometry(
       stemThickness - (stemThickness * stemTaper),
@@ -98,11 +100,15 @@ export default class Plant {
     this.object.add(stemMesh);
 
     [value, index] = this.acquireValueFromData(data, index);
-    const branchingFactor = Math.abs((value + 2) * 0.2) % 1;
+    const branchingRadialFactor = rampUpDownMod(Math.abs((value + 1.4) * 0.8) , 3 * Math.PI) + Math.PI;
+    [value, index] = this.acquireValueFromData(data, index);
+    const branchingHeightFactor = rampUpDownMod(Math.abs((value + 2) * 0.2), 1);
+    [value, index] = this.acquireValueFromData(data, index);
+    const branchSplay = rampUpDownMod(Math.abs(value * 0.8), 0.35 * Math.PI);
     [value, index] = this.acquireValueFromData(data, index);
     const branchThickness = Math.abs((value + 3) * 0.02) + 0.01;
     [value, index] = this.acquireValueFromData(data, index);
-    const branchTaper = Math.abs(value * 0.3) % 0.3 + 0.65;
+    const branchTaper = rampUpDownMod(Math.abs(value * 0.3), 0.3) + 0.65;
     [value, index] = this.acquireValueFromData(data, index);
     const branchLength = Math.abs((value + 3) * 0.5) * 0.75;
     [value, index] = this.acquireValueFromData(data, index);
@@ -112,19 +118,54 @@ export default class Plant {
     [value, index] = this.acquireValueFromData(data, index);
     const branchHue = Math.floor(Math.abs(value * 200) % 360);
     [value, index] = this.acquireValueFromData(data, index);
-    const branchSat = Math.floor(Math.abs(value * 100) % 80 + 20);
+    const branchSat = Math.floor(rampUpDownMod(Math.abs(value * 100), 80) + 20);
     [value, index] = this.acquireValueFromData(data, index);
-    const branchLit = Math.floor(Math.abs(value * 100) % 60 + 40);
+    const branchLit = Math.floor(rampUpDownMod(Math.abs(value * 100), 60) + 40);
     [value, index] = this.acquireValueFromData(data, index);
-    const branchRough = Math.abs(value) % 1;
+    const branchRough = rampUpDownMod(Math.abs(value), 1);
     [value, index] = this.acquireValueFromData(data, index);
-    const branchMetal = Math.abs(value) % 1;
+    const branchMetal = rampUpDownMod(Math.abs(value * 0.1), 0.25);
     [value, index] = this.acquireValueFromData(data, index);
-    const branchReflect = Math.abs(value) % 1;
+    const branchReflect = rampUpDownMod(Math.abs(value), 1);
     [value, index] = this.acquireValueFromData(data, index);
-    const branchClearcoat = Math.abs(value) % 1;
+    const branchClearcoat = rampUpDownMod(Math.abs(value), 1);
     [value, index] = this.acquireValueFromData(data, index);
-    const branchClearcoatRough = Math.abs(value) % 1; // note just for future counting sake, this is the 28th value
+    const branchClearcoatRough = rampUpDownMod(Math.abs(value), 1); // note just for future counting sake, this is the 28th value
+
+    const branchGeometry = new THREE.CylinderGeometry(
+      branchThickness - (branchThickness * branchTaper),
+      branchThickness + (branchThickness * branchTaper),
+      branchLength,
+      branchRadialSeg,
+      branchHeightSeg,
+    );
+    const branchMaterial = new THREE.MeshPhysicalMaterial({
+      color: new THREE.Color(`hsl(${branchHue}, ${branchSat}%, ${branchLit}%)`),
+      roughness: branchRough,
+      metalness: branchMetal,
+      reflectivity: branchReflect,
+      clearcoat: branchClearcoat,
+      clearcoatRoughness: branchClearcoatRough,
+      flatShading: false,
+      side: THREE.DoubleSide,
+    });
+
+    for (
+      let branchHeight = branchingHeightFactor, branchRotation = branchingRadialFactor;
+      branchHeight < stemHeight;
+      branchHeight += branchingHeightFactor, branchRotation += branchingRadialFactor
+    ) {
+      const scale = (stemHeight - branchHeight) / stemHeight;
+      const branchMesh = new THREE.Mesh(branchGeometry, branchMaterial);
+      branchMesh.position.y = branchLength / 2 - stemHeight / 2;
+      branchMesh.position.x = Math.sin(branchSplay) * 0.75 * Math.sin(branchRotation) * scale;
+      branchMesh.position.z = Math.sin(branchSplay) * 0.75 * Math.cos(branchRotation) * scale;
+      branchMesh.rotateOnWorldAxis(new Vector3(1, 0, 0), branchSplay);
+      branchMesh.rotateOnWorldAxis(new Vector3(0, 1, 0), branchRotation);
+      branchMesh.position.y = (branchHeight + branchLength / 2 - stemHeight / 2) * (scale * 0.3 + 0.7);
+      branchMesh.scale.set(scale, scale, scale);
+      stemMesh.add(branchMesh);
+    }
   }
 
   private acquireValueFromData(data: Float32Array, index: number): [number, number] {

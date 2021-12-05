@@ -34,3 +34,11 @@ export function getSkewedRandom(min: number, max: number, skew: number): number 
 export function delay(ms: number): Promise<Function> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+/**
+ * Kind of like the modulo operator, "wraps" a number around a maximum.
+ * But unlike the modulo operator, it behaves like a triangle wave instead of a sawtooth wave.
+ */
+export function rampUpDownMod(value: number, max: number): number {
+  return max - Math.abs(value % (max * 2) - max);
+}
