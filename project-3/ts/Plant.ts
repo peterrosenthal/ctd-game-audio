@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import { Scene, Object3D, Mesh, MeshPhysicalMaterial, CylinderGeometry, Color, DoubleSide } from 'three';
 import { INoteSequence, MusicVAE } from '@magenta/music/es6';
 import GameManager from './GameManager';
 import Settings from './Settings';
@@ -10,12 +10,12 @@ import { Vector3 } from 'three';
  */
 export default class Plant {
   private settings: Settings;
-  private scene: THREE.Scene;
+  private scene: Scene;
 
   private mvae: MusicVAE;
 
   sequence: INoteSequence;
-  object: THREE.Object3D;
+  object: Object3D;
 
   constructor(sequence: INoteSequence) {
     this.settings = Settings.getInstance();
@@ -23,7 +23,7 @@ export default class Plant {
 
     this.sequence = sequence;
 
-    this.object = new THREE.Object3D();
+    this.object = new Object3D();
     this.scene.add(this.object);
 
     this.mvae = new MusicVAE(this.settings.generator.checkPointUrl);
@@ -75,27 +75,27 @@ export default class Plant {
     [value, index] = this.acquireValueFromData(data, index);
     const stemLeanAmount = rampUpDownMod(value / 4, 0.25 * Math.PI);
     
-    const stemGeometry = new THREE.CylinderGeometry(
+    const stemGeometry = new CylinderGeometry(
       stemThickness - (stemThickness * stemTaper),
       stemThickness + (stemThickness * stemTaper),
       stemHeight,
       stemRadialSeg,
       stemHeightSeg,
     );
-    const stemMaterial = new THREE.MeshPhysicalMaterial({
-      color: new THREE.Color(`hsl(${stemHue}, ${stemSat}%, ${stemLit}%)`),
+    const stemMaterial = new MeshPhysicalMaterial({
+      color: new Color(`hsl(${stemHue}, ${stemSat}%, ${stemLit}%)`),
       roughness: stemRough,
       metalness: stemMetal,
       reflectivity: stemReflect,
       clearcoat: stemClearcoat,
       clearcoatRoughness: stemClearcoatRough,
       flatShading: false,
-      side: THREE.DoubleSide,
+      side: DoubleSide,
     });
-    const stemMesh = new THREE.Mesh(stemGeometry, stemMaterial);
+    const stemMesh = new Mesh(stemGeometry, stemMaterial);
     stemMesh.position.y = stemHeight / 2;
-    stemMesh.rotateOnWorldAxis(new THREE.Vector3(1, 0, 0), stemLeanAmount);
-    stemMesh.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), Math.random() * 2 * Math.PI);
+    stemMesh.rotateOnWorldAxis(new Vector3(1, 0, 0), stemLeanAmount);
+    stemMesh.rotateOnWorldAxis(new Vector3(0, 1, 0), Math.random() * 2 * Math.PI);
 
     this.object.add(stemMesh);
 
@@ -132,22 +132,22 @@ export default class Plant {
     [value, index] = this.acquireValueFromData(data, index);
     const branchClearcoatRough = rampUpDownMod(Math.abs(value), 1); // note just for future counting sake, this is the 28th value
 
-    const branchGeometry = new THREE.CylinderGeometry(
+    const branchGeometry = new CylinderGeometry(
       branchThickness - (branchThickness * branchTaper),
       branchThickness + (branchThickness * branchTaper),
       branchLength,
       branchRadialSeg,
       branchHeightSeg,
     );
-    const branchMaterial = new THREE.MeshPhysicalMaterial({
-      color: new THREE.Color(`hsl(${branchHue}, ${branchSat}%, ${branchLit}%)`),
+    const branchMaterial = new MeshPhysicalMaterial({
+      color: new Color(`hsl(${branchHue}, ${branchSat}%, ${branchLit}%)`),
       roughness: branchRough,
       metalness: branchMetal,
       reflectivity: branchReflect,
       clearcoat: branchClearcoat,
       clearcoatRoughness: branchClearcoatRough,
       flatShading: false,
-      side: THREE.DoubleSide,
+      side: DoubleSide,
     });
 
     for (
@@ -156,7 +156,7 @@ export default class Plant {
       branchHeight += branchingHeightFactor, branchRotation += branchingRadialFactor
     ) {
       const scale = (stemHeight - branchHeight) / stemHeight;
-      const branchMesh = new THREE.Mesh(branchGeometry, branchMaterial);
+      const branchMesh = new Mesh(branchGeometry, branchMaterial);
       branchMesh.position.y = branchLength / 2 - stemHeight / 2;
       branchMesh.position.x = Math.sin(branchSplay) * 0.75 * Math.sin(branchRotation) * scale;
       branchMesh.position.z = Math.sin(branchSplay) * 0.75 * Math.cos(branchRotation) * scale;

@@ -1,4 +1,4 @@
-import * as THREE from 'three';
+import { Scene, DirectionalLight, AmbientLight } from 'three';
 import GameManager from './GameManager';
 import Settings from './Settings';
 
@@ -10,17 +10,17 @@ import Settings from './Settings';
  */
 export default class Lights {
   private settings: Settings;
-  private scene: THREE.Scene;
+  private scene: Scene;
 
-  private directional: THREE.DirectionalLight;
-  private ambient: THREE.AmbientLight;
+  private directional: DirectionalLight;
+  private ambient: AmbientLight;
 
   constructor() {
     this.settings = Settings.getInstance();
     this.scene = GameManager.getScene();
 
     // directional light
-    this.directional = new THREE.DirectionalLight(
+    this.directional = new DirectionalLight(
       this.settings.lights.directional.color,
       this.settings.lights.directional.intensity,
     );
@@ -32,7 +32,7 @@ export default class Lights {
     this.scene.add(this.directional);
 
     // ambient light
-    this.ambient = new THREE.AmbientLight(
+    this.ambient = new AmbientLight(
       this.settings.lights.ambient.color,
       this.settings.lights.ambient.intensity,
     );

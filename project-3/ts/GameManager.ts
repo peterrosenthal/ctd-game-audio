@@ -1,5 +1,5 @@
-import * as mm from '@magenta/music/es6';
-import * as THREE from 'three';
+import { INoteSequence, SoundFontPlayer } from '@magenta/music/es6';
+import { Scene, WebGLRenderer, PerspectiveCamera,  } from 'three';
 import Lights from './Lights';
 import Skybox from './Skybox';
 import Settings from './Settings';
@@ -14,18 +14,18 @@ import MidiUpload from './MidiUpload';
  * like the main animation loop and the initialization of all the subcomponents.
  */
 export default class GameManager {
-  private static sscene: THREE.Scene | null | undefined;
-  static getScene(): THREE.Scene {
+  private static sscene: Scene | null | undefined;
+  static getScene(): Scene {
     if (this.sscene === null || this.sscene === undefined) {
-      this.sscene = new THREE.Scene();
+      this.sscene = new Scene();
     }
     return this.sscene;
   }
 
-  private static srenderer: THREE.WebGLRenderer | null | undefined;
-  static getRenderer(): THREE.WebGLRenderer {
+  private static srenderer: WebGLRenderer | null | undefined;
+  static getRenderer(): WebGLRenderer {
     if (this.srenderer === null || this.srenderer === undefined) {
-      this.srenderer = new THREE.WebGLRenderer();
+      this.srenderer = new WebGLRenderer();
       this.srenderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(this.srenderer.domElement);
     }
@@ -34,9 +34,9 @@ export default class GameManager {
 
   private settings: Settings;
 
-  private scene: THREE.Scene;
-  private camera: THREE.PerspectiveCamera;
-  private renderer: THREE.WebGLRenderer;
+  private scene: Scene;
+  private camera: PerspectiveCamera;
+  private renderer: WebGLRenderer;
 
   private generator: Generator;
 
@@ -48,7 +48,7 @@ export default class GameManager {
     this.scene = GameManager.getScene();
 
     // THREE camera
-    this.camera = new THREE.PerspectiveCamera(
+    this.camera = new PerspectiveCamera(
       this.settings.camera.fov,
       window.innerWidth / window.innerHeight,
       this.settings.camera.near,
@@ -87,8 +87,8 @@ export default class GameManager {
   }
 
   private async testGenerator(): Promise<void> {
-    const player = new mm.SoundFontPlayer('https://storage.googleapis.com/magentadata/js/soundfonts/salamander');
-    async function playSequence(sequence: mm.INoteSequence): Promise<void> {
+    const player = new SoundFontPlayer('https://storage.googleapis.com/magentadata/js/soundfonts/salamander');
+    async function playSequence(sequence: INoteSequence): Promise<void> {
       if (player.isPlaying()) {
         player.stop();
       }

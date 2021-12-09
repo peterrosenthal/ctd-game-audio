@@ -1,11 +1,18 @@
-import { midiToSequenceProto } from '@magenta/music/es6/core'
+import { sequences, midiToSequenceProto } from '@magenta/music/es6'; 
+import Plant from './Plant';
 
 export default class MidiUpload {
-  fileInput: HTMLInputElement;
+  private fileInput: HTMLInputElement;
+  private fileReader: FileReader;
 
   constructor(parent: HTMLElement) {
     // bind event listeners
     this.onFileInputChange = this.onFileInputChange.bind(this);
+    this.fileToMidi = this.fileToMidi.bind(this);
+
+    // create file reader
+    this.fileReader = new FileReader();
+    this.fileReader.onload = this.fileToMidi;
 
     // create the file upload element
     this.fileInput = document.createElement('input');
@@ -18,14 +25,14 @@ export default class MidiUpload {
     if (this.fileInput.files === null || this.fileInput.files === undefined) {
       return;
     }
-    const fileReader = new FileReader()
-    fileReader.onload = function() {
-      if (fileReader.result instanceof ArrayBuffer) {
-        console.log(midiToSequenceProto(fileReader.result));
-      }
-    };
     for (let file of this.fileInput.files) {
-      fileReader.readAsArrayBuffer(file);
+      this.fileReader.readAsArrayBuffer(file);
+    }
+  }
+
+  fileToMidi(): void {
+    if (this.fileReader.result instanceof ArrayBuffer) {
+      new Plant(sequences.quantizeNoteSequence(midiToSequenceProto(this.fileReader.result), 2));
     }
   }
 }
