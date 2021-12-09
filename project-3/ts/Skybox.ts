@@ -1,22 +1,20 @@
-import * as THREE from 'three';
-import GameManager from './GameManager';
+import { Scene, WebGLRenderer, WebGLCubeRenderTarget, TextureLoader, Texture } from 'three';
 
 export default class Skybox {
-  private scene: THREE.Scene;
-  private renderer: THREE.WebGLRenderer;
+  private scene: Scene;
+  private renderer: WebGLRenderer;
 
-  texture: THREE.Texture;
+  texture: Texture;
 
-  constructor() {
-    // asign private members
-    this.scene = GameManager.getScene();
-    this.renderer = GameManager.getRenderer();
+  constructor(scene: Scene, renderer: WebGLRenderer) {
+    this.scene = scene;
+    this.renderer = renderer;
 
     // bind event functions
     this.onTextureLoaded = this.onTextureLoaded.bind(this);
 
     // skybox texture
-    this.texture = new THREE.TextureLoader().load(
+    this.texture = new TextureLoader().load(
       '../textures/skybox.png',
       this.onTextureLoaded,
       undefined,
@@ -24,11 +22,8 @@ export default class Skybox {
     );
   }
 
-  init(): void {
-  }
-
   onTextureLoaded(): void {
-    const renderTarget = new THREE.WebGLCubeRenderTarget(this.texture.image.height);
+    const renderTarget = new WebGLCubeRenderTarget(this.texture.image.height);
     renderTarget.fromEquirectangularTexture(this.renderer, this.texture);
     this.scene.background = renderTarget.texture;
   }

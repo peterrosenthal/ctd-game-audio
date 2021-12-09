@@ -10,14 +10,12 @@ import Settings from './Settings';
  */
 export default class Lights {
   private settings: Settings;
-  private scene: Scene;
 
   private directional: DirectionalLight;
   private ambient: AmbientLight;
 
-  constructor() {
+  constructor(scene: Scene) {
     this.settings = Settings.getInstance();
-    this.scene = GameManager.getScene();
 
     // directional light
     this.directional = new DirectionalLight(
@@ -29,13 +27,13 @@ export default class Lights {
       this.settings.lights.directional.position.y,
       this.settings.lights.directional.position.z,
     );
-    this.scene.add(this.directional);
+    scene.add(this.directional);
 
     // ambient light
     this.ambient = new AmbientLight(
       this.settings.lights.ambient.color,
       this.settings.lights.ambient.intensity,
     );
-    this.scene.add(this.ambient);
+    scene.add(this.ambient);
   }
 }

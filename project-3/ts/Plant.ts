@@ -1,16 +1,13 @@
-import { Scene, Object3D, Mesh, MeshPhysicalMaterial, CylinderGeometry, Color, DoubleSide } from 'three';
+import { Scene, Object3D, Mesh, MeshPhysicalMaterial, CylinderGeometry, Color, DoubleSide, Vector3 } from 'three';
 import { INoteSequence, MusicVAE } from '@magenta/music/es6';
-import GameManager from './GameManager';
 import Settings from './Settings';
 import { rampUpDownMod } from './utils';
-import { Vector3 } from 'three';
 
 /**
  * Generates a plant based on a note sequence
  */
 export default class Plant {
   private settings: Settings;
-  private scene: Scene;
 
   private mvae: MusicVAE;
 
@@ -19,24 +16,26 @@ export default class Plant {
 
   constructor(sequence: INoteSequence) {
     this.settings = Settings.getInstance();
-    this.scene = GameManager.getScene();
 
     this.sequence = sequence;
 
     this.object = new Object3D();
-    this.scene.add(this.object);
 
     this.mvae = new MusicVAE(this.settings.generator.checkPointUrl);
 
     this.generate();
   }
 
-  moveToTheLeft(): void {
-    this.object.position.x -= 1;
+  addToScene(scene: Scene) {
+    scene.add(this.object);
   }
 
-  removeFromScene(): void {
+  removeFromScene() {
     this.object.removeFromParent();
+  }
+
+  moveToTheLeft(): void {
+    this.object.position.x -= 1;
   }
 
   async generate(): Promise<void> {

@@ -16,7 +16,13 @@ export default class Component {
     }
     parent.appendChild(this.element);
     this.initialized = true;
+
+    if (this.componentHasInitialized !== undefined) {
+      this.componentHasInitialized();
+    }
   }
+
+  componentHasInitialized?(): void;
 
   removeComponent(): void {
     if (!this.initialized || this.element === undefined) {
