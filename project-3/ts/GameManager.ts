@@ -7,7 +7,7 @@ import Generator from './Generator';
 import Plant from './Plant';
 import { TWINKLE_FIRST_HALF, TWINKLE_SECOND_HALF } from './sequences';
 import { delay } from './utils';
-import MidiUpload from './MidiUpload';
+import MidiUpload from './components/MidiUpload';
 
 /**
  * The GameManager is the main 'app' that houses all the essentials
@@ -75,7 +75,9 @@ export default class GameManager {
     new Lights();
 
     // add the file uploader to the dom
-    new MidiUpload(document.body);
+    const midiUpload = new MidiUpload();
+    midiUpload.initComponent(document.body);
+    
 
     // test the magenta music generator
     this.generator = new Generator();
