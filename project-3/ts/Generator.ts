@@ -1,4 +1,4 @@
-import * as mm from '@magenta/music/es6';
+import { INoteSequence, MusicVAE } from '@magenta/music/es6';
 import Settings from './Settings';
 import Plant from './Plant';
 import { getSkewedRandom } from './utils';
@@ -12,7 +12,7 @@ import { getSkewedRandom } from './utils';
 export default class Generator {
   private settings: Settings;
 
-  private mvae: mm.MusicVAE;
+  private mvae: MusicVAE;
   private checkpointUrl: string;
   private numChildren: number;
   private parentSimilaritySkew: number;
@@ -23,7 +23,7 @@ export default class Generator {
     this.settings = Settings.getInstance();
 
     this.checkpointUrl = this.settings.generator.checkPointUrl;
-    this.mvae = new mm.MusicVAE(this.checkpointUrl);
+    this.mvae = new MusicVAE(this.checkpointUrl);
     this.numChildren = this.settings.generator.numChildren;
     this.parentSimilaritySkew = this.settings.generator.parentSimilaritySkew;
     this.parentSimilarityTemperature = this.settings.generator.parentSimilarityTemperature;
@@ -34,7 +34,7 @@ export default class Generator {
     this.checkSettingsForUpdates();
     const children: Plant[] = [];
     for (let i = 0; i < this.numChildren; i++) {
-      const parents: mm.INoteSequence[] = [];
+      const parents: INoteSequence[] = [];
       await this.mvae.initialize();
       parents.push((await this.mvae.similar(
         parentA.sequence,
@@ -48,7 +48,7 @@ export default class Generator {
         getSkewedRandom(0, 1, this.parentSimilaritySkew),
         this.parentSimilarityTemperature,
       ))[0]);
-      const results: mm.INoteSequence[] = await this.mvae.interpolate(
+      const results: INoteSequence[] = await this.mvae.interpolate(
         parents,
         this.interpolationResolution,
       );
@@ -60,7 +60,7 @@ export default class Generator {
   private checkSettingsForUpdates() {
     if (this.checkpointUrl != this.settings.generator.checkPointUrl) {
       this.checkpointUrl = this.settings.generator.checkPointUrl;
-      this.mvae = new mm.MusicVAE(this.checkpointUrl);
+      this.mvae = new MusicVAE(this.checkpointUrl);
     }
     if (this.numChildren != this.settings.generator.numChildren) {
       this.numChildren = this.settings.generator.numChildren;

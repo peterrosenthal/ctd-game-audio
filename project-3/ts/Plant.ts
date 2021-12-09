@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import * as mm from '@magenta/music/es6';
+import { INoteSequence, MusicVAE } from '@magenta/music/es6';
 import GameManager from './GameManager';
 import Settings from './Settings';
 import { rampUpDownMod } from './utils';
@@ -12,12 +12,12 @@ export default class Plant {
   private settings: Settings;
   private scene: THREE.Scene;
 
-  private mvae: mm.MusicVAE;
+  private mvae: MusicVAE;
 
-  sequence: mm.INoteSequence;
+  sequence: INoteSequence;
   object: THREE.Object3D;
 
-  constructor(sequence: mm.INoteSequence) {
+  constructor(sequence: INoteSequence) {
     this.settings = Settings.getInstance();
     this.scene = GameManager.getScene();
 
@@ -26,7 +26,7 @@ export default class Plant {
     this.object = new THREE.Object3D();
     this.scene.add(this.object);
 
-    this.mvae = new mm.MusicVAE(this.settings.generator.checkPointUrl);
+    this.mvae = new MusicVAE(this.settings.generator.checkPointUrl);
 
     this.generate();
   }
