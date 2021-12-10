@@ -11,7 +11,7 @@ export default class Combinator extends Component {
     // create the component container element
     this.element = document.createElement('div');
     this.element.style.width = '90%';
-    this.element.style.maxWidth = '45em';
+    this.element.style.maxWidth = '55em';
     this.element.style.margin = 'auto';
     this.element.style.display = 'flex';
     this.element.style.flexFlow = 'row wrap';
@@ -20,9 +20,9 @@ export default class Combinator extends Component {
 
     // create the two parent components
     this.parentA = new Parent();
-    this.parentA.initComponent(this.element);
+    this.parentA.initComponentToParent(this.element);
     
     this.parentB = new Parent();
-    this.parentB.initComponent(this.element);
+    this.parentB.initComponentToParent(this.element);
   }
 }

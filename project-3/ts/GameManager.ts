@@ -3,7 +3,6 @@ import Generator from './Generator';
 import Plant from './Plant';
 import { TWINKLE_FIRST_HALF, TWINKLE_SECOND_HALF } from './sequences';
 import { delay } from './utils';
-import MidiUpload from './components/MidiUpload';
 import Combinator from './components/Combinator';
 
 /**
@@ -11,16 +10,32 @@ import Combinator from './components/Combinator';
  * like the main animation loop and the initialization of all the subcomponents.
  */
 export default class GameManager {
+  private static plants?: Plant[];
+  public static getPlants(): Plant[] {
+    if (this.plants === undefined) {
+      this.plants = [];
+    }
+    return this.plants;
+  }
+  public static addPlant(plant: Plant): void {
+    if (this.plants === undefined) {
+      this.plants = [];
+    }
+    this.plants.push(plant);
+  }
+  public static removePlant(plant: Plant): void {
+    if (this.plants === undefined) {
+      return;
+    }
+    this.plants = this.plants.filter(thisplant => thisplant != plant);
+  }
+
   private generator: Generator;
 
   constructor() {
-    // add the file uploader to the dom
-    const midiUpload = new MidiUpload();
-    midiUpload.initComponent(document.body);
-
     // add the combinator component to the dom
     const combinator = new Combinator();
-    combinator.initComponent(document.body);
+    combinator.initComponentToParent(document.body);
     
     // test the magenta music generator
     this.generator = new Generator();

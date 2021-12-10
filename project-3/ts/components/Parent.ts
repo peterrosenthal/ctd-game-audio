@@ -3,17 +3,22 @@ import Lights from '../Lights';
 import Settings from '../Settings';
 import Skybox from '../Skybox';
 import Component from './Component';
-import { delay } from '../utils';
 import Plant from '../Plant';
+import { delay } from '../utils';
 import { TWINKLE_FIRST_HALF } from '../sequences';
+import MidiUpload from './MidiUpload';
 
 export default class Parent extends Component {
   private settings: Settings;
 
   private canvas: HTMLCanvasElement;
+  private modal: HTMLDivElement;
+
   private scene?: Scene;
   private camera?: PerspectiveCamera;
   private renderer?: WebGLRenderer;
+
+  plant?: Plant;
 
   constructor() {
     super();
@@ -30,8 +35,10 @@ export default class Parent extends Component {
 
     // create the component container element
     this.element = document.createElement('div');
+    this.element.style.position = 'relative';
     this.element.style.width = '40%';
-    this.element.style.minWidth = '16em';
+    this.element.style.minWidth = '13em';
+    this.element.style.maxWidth = '16em';
     this.element.style.margin = '0.5em';
     this.element.style.padding = '0';
 
@@ -41,6 +48,21 @@ export default class Parent extends Component {
     this.canvas.style.height = '100%';
     this.canvas.style.margin = '0';
     this.canvas.style.borderRadius = '0.2em';
+
+    // create the modal element
+    this.modal = document.createElement('div');
+    this.modal.style.position = 'absolute';
+    this.modal.style.zIndex = '2';
+    this.modal.style.width = '80%';
+    this.modal.style.height = '78%';
+    this.modal.style.margin = '10% 10% 12%';
+    this.modal.style.background = '#f0f0ef';
+    this.modal.style.borderRadius = '0.2em';
+    this.element.appendChild(this.modal);
+
+    // init the midiupload component
+    const midiUpload = new MidiUpload(this);
+    midiUpload.initComponentToParent(this.modal);
   }
   
   override componentHasInitialized(): void {
@@ -73,12 +95,21 @@ export default class Parent extends Component {
     new Skybox(this.scene, this.renderer);
     new Lights(this.scene);
 
-    // create a demo plant
-    const plant = new Plant(TWINKLE_FIRST_HALF);
-    plant.addToScene(this.scene);
-
     // start animation loop
     requestAnimationFrame(this.animate);
+  }
+
+  setPlant(plant: Plant): void {
+    if (this.plant !== undefined) {
+      this.plant.removeFromScene();
+    }
+    this.plant = plant;
+    if (this.scene !== undefined) {
+      this.plant.addToScene(this.scene);
+    }
+    if (this.modal.style.display !== 'none') {
+      this.modal.style.display = 'none';
+    }
   }
 
   private animate(): void {

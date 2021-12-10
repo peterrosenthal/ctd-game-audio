@@ -20,13 +20,13 @@ export default class Settings {
   };
 
   camera = {
-    fov: 60,
+    fov: 55,
     near: 0.1,
     far: 1000,
     position: {
       x: 0,
       y: 0.75,
-      z: 4,
+      z: 3,
     },
     lookAt: {
       x: 0,

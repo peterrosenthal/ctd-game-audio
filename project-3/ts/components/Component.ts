@@ -10,15 +10,46 @@ export default class Component {
     this.display = 'auto';
   }
 
-  initComponent(parent: HTMLElement): void {
+  initComponentToParent(parent: HTMLElement): void {
     if (this.initialized || this.element === undefined) {
       return;
     }
+
     parent.appendChild(this.element);
     this.initialized = true;
 
     if (this.componentHasInitialized !== undefined) {
       this.componentHasInitialized();
+    }
+  }
+
+  initComponentBefore(before: HTMLElement): void {
+    if (this.initialized || this.element === undefined) {
+      return;
+    }
+
+    if (before.parentNode !== null) {
+      before.parentNode.insertBefore(this.element, before);
+      this.initialized = true;
+
+      if (this.componentHasInitialized !== undefined) {
+        this.componentHasInitialized();
+      }
+    }
+  }
+
+  initComponentAfter(after: HTMLElement): void {
+    if (this.initialized || this.element === undefined) {
+      return;
+    }
+
+    if (after.parentNode !== null) {
+      after.parentNode.insertBefore(this.element, after.nextSibling);
+      this.initialized = true;
+
+      if (this.componentHasInitialized !== undefined) {
+        this.componentHasInitialized();
+      }
     }
   }
 
