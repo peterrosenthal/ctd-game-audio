@@ -11,6 +11,10 @@ export default class Settings {
     return this.instance;
   }
 
+  player = {
+    url: 'https://storage.googleapis.com/magentadata/js/soundfonts/salamander',
+  };
+
   generator = {
     checkPointUrl: 'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_2bar_small',
     numChildren: 1,
@@ -37,7 +41,7 @@ export default class Settings {
 
   lights = {
     directional: {
-      color: 0xfffffee,
+      color: 0xfffffff,
       intensity: 0.3,
       position: {
         x: 5,
@@ -46,7 +50,7 @@ export default class Settings {
       },
     },
     ambient: {
-      color: 0xeeffff,
+      color: 0xffffff,
       intensity: 0.7,
     },
   };

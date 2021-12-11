@@ -1,17 +1,23 @@
 import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
+import GameManager from '../GameManager';
 import Lights from '../Lights';
 import Settings from '../Settings';
 import Skybox from '../Skybox';
 import Component from './Component';
 import Plant from '../Plant';
 import { delay } from '../utils';
-import { TWINKLE_FIRST_HALF } from '../sequences';
 import MidiUpload from './MidiUpload';
+import { INoteSequence } from '@magenta/music/es6';
 
 export default class Parent extends Component {
   private settings: Settings;
 
   private canvas: HTMLCanvasElement;
+  private buttons: HTMLDivElement;
+  private inventoryButton: HTMLButtonElement;
+  private inventoryImage: HTMLImageElement;
+  private playButton: HTMLButtonElement;
+  private playImage: HTMLImageElement;
   private modal: HTMLDivElement;
 
   private scene?: Scene;
@@ -29,6 +35,18 @@ export default class Parent extends Component {
     // bind event listeners
     this.animate = this.animate.bind(this);
     this.onWindowResize = this.onWindowResize.bind(this);
+    this.onOpenInventoryButtonClick = this.onOpenInventoryButtonClick.bind(this);
+    this.onOpenInventoryButtonMouseEnter = this.onOpenInventoryButtonMouseEnter.bind(this);
+    this.onOpenInventoryButtonMouseLeave = this.onOpenInventoryButtonMouseLeave.bind(this);
+    this.onCloseInventoryButtonClick = this.onCloseInventoryButtonClick.bind(this);
+    this.onCloseInventoryButtonMouseEnter = this.onCloseInventoryButtonMouseEnter.bind(this);
+    this.onCloseInventoryButtonMouseLeave = this.onCloseInventoryButtonMouseLeave.bind(this);
+    this.onPlayButtonClick = this.onPlayButtonClick.bind(this);
+    this.onPlayButtonMouseEnter = this.onPlayButtonMouseEnter.bind(this);
+    this.onPlayButtonMouseLeave = this.onPlayButtonMouseLeave.bind(this);
+    this.onStopButtonClick = this.onStopButtonClick.bind(this);
+    this.onStopButtonMouseEnter = this.onStopButtonMouseEnter.bind(this);
+    this.onStopButtonMouseLeave = this.onStopButtonMouseLeave.bind(this);
 
     // add window resize event listener
     window.addEventListener('resize', this.onWindowResize);
@@ -49,8 +67,50 @@ export default class Parent extends Component {
     this.canvas.style.margin = '0';
     this.canvas.style.borderRadius = '0.2em';
 
+    // create the buttons bar
+    this.buttons = document.createElement('div');
+    this.buttons.style.width = '100%';
+    this.buttons.style.display = 'flex';
+    this.buttons.style.flexFlow = 'row';
+    this.buttons.style.alignItems = 'center';
+    this.buttons.style.justifyContent = 'space-between';
+    this.element.appendChild(this.buttons);
+   
+    // open inventory button
+    this.inventoryButton = document.createElement('button');
+    this.inventoryButton.style.background = 'none';
+    this.inventoryButton.style.border = 'none';
+    this.inventoryButton.addEventListener('click', this.onCloseInventoryButtonClick);
+    this.inventoryButton.addEventListener('mouseenter', this.onCloseInventoryButtonMouseEnter);
+    this.inventoryButton.addEventListener('mouseleave', this.onCloseInventoryButtonMouseLeave);
+    this.buttons.appendChild(this.inventoryButton);
+    
+    this.inventoryImage = document.createElement('img');
+    this.inventoryImage.alt = 'Close inventory';
+    this.inventoryImage.title = 'Close plant inventory';
+    this.inventoryImage.src = './images/close-inventory-light.svg';
+    this.inventoryButton.appendChild(this.inventoryImage);
+
+    // play button
+    this.playButton = document.createElement('button');
+    this.playButton.style.background = 'none';
+    this.playButton.style.border = 'none';
+    this.playButton.addEventListener('click', this.onPlayButtonClick);
+    this.playButton.addEventListener('mouseenter', this.onPlayButtonMouseEnter);
+    this.playButton.addEventListener('mouseleave', this.onPlayButtonMouseLeave);
+
+    this.playImage = document.createElement('img');
+    this.playImage.alt = 'Play';
+    this.playImage.title = 'Play the plant\'s song';
+    this.playImage.src = './images/play-light.svg';
+    this.playButton.appendChild(this.playImage);
+
     // create the modal element
     this.modal = document.createElement('div');
+    this.modal.style.display = 'flex';
+    this.modal.style.flexFlow = 'row';
+    this.modal.style.alignItems = 'center';
+    this.modal.style.justifyContent = 'center safe';
     this.modal.style.position = 'absolute';
     this.modal.style.zIndex = '2';
     this.modal.style.width = '80%';
@@ -100,6 +160,12 @@ export default class Parent extends Component {
   }
 
   setPlant(plant: Plant): void {
+    if (this.buttons.childElementCount < 2) {
+      this.buttons.appendChild(this.playButton);
+    }
+    if (this.modal.style.display !== 'none') {
+      this.inventoryButton.click();
+    }
     if (this.plant !== undefined) {
       this.plant.removeFromScene();
     }
@@ -136,5 +202,118 @@ export default class Parent extends Component {
   private async resizeCanvasDelay(): Promise<void> {
     await delay(3);
     this.resizeCanvas();
+  }
+
+  private onOpenInventoryButtonClick(): void {
+    this.modal.style.display = 'flex';
+
+    this.inventoryButton.removeEventListener('click', this.onOpenInventoryButtonClick);
+    this.inventoryButton.removeEventListener('mouseenter', this.onOpenInventoryButtonMouseEnter);
+    this.inventoryButton.removeEventListener('mouseleave', this.onOpenInventoryButtonMouseLeave);
+    this.inventoryButton.addEventListener('click', this.onCloseInventoryButtonClick);
+    this.inventoryButton.addEventListener('mouseenter', this.onCloseInventoryButtonMouseEnter);
+    this.inventoryButton.addEventListener('mouseleave', this.onCloseInventoryButtonMouseLeave);
+
+    this.inventoryImage.alt = 'Close inventory';
+    this.inventoryImage.title = 'Close plant inventory';
+    this.inventoryImage.src = './images/close-inventory-light.svg';
+  }
+
+  private onOpenInventoryButtonMouseEnter(): void {
+    this.inventoryImage.src = './images/open-inventory-dark.svg';
+  }
+
+  private onOpenInventoryButtonMouseLeave(): void {
+    this.inventoryImage.src = './images/open-inventory-light.svg';
+  }
+
+  private onCloseInventoryButtonClick(): void {
+    this.modal.style.display = 'none';
+
+    this.inventoryButton.removeEventListener('click', this.onCloseInventoryButtonClick);
+    this.inventoryButton.removeEventListener('mouseenter', this.onCloseInventoryButtonMouseEnter);
+    this.inventoryButton.removeEventListener('mouseleave', this.onCloseInventoryButtonMouseLeave);
+    this.inventoryButton.addEventListener('click', this.onOpenInventoryButtonClick);
+    this.inventoryButton.addEventListener('mouseenter', this.onOpenInventoryButtonMouseEnter);
+    this.inventoryButton.addEventListener('mouseleave', this.onOpenInventoryButtonMouseLeave);
+
+    this.inventoryImage.alt = 'Open inventory';
+    this.inventoryImage.title = 'Open plant inventory';
+    this.inventoryImage.src = './images/open-inventory-light.svg';
+  }
+
+  private onCloseInventoryButtonMouseEnter(): void {
+    this.inventoryImage.src = './images/close-inventory-dark.svg';
+  }
+
+  private onCloseInventoryButtonMouseLeave(): void {
+    this.inventoryImage.src = './images/close-inventory-light.svg';
+  }
+
+  private onPlayButtonClick(): void {
+    this.modal.style.display = 'none';
+
+    this.playButton.removeEventListener('click', this.onPlayButtonClick);
+    this.playButton.removeEventListener('mouseenter', this.onPlayButtonMouseEnter);
+    this.playButton.removeEventListener('mouseleave', this.onPlayButtonMouseLeave);
+    this.playButton.addEventListener('click', this.onStopButtonClick);
+    this.playButton.addEventListener('mouseenter', this.onStopButtonMouseEnter);
+    this.playButton.addEventListener('mouseleave', this.onStopButtonMouseLeave);
+
+    this.playImage.alt = 'Stop';
+    this.playImage.title = 'Stop the plant\'s song';
+    this.playImage.src = './images/stop-light.svg';
+
+    this.playSequence();
+  }
+
+  private onPlayButtonMouseEnter(): void {
+    this.playImage.src = './images/play-dark.svg';
+  }
+
+  private onPlayButtonMouseLeave(): void {
+    this.playImage.src = './images/play-light.svg';
+  }
+
+  private onStopButtonClick(): void {
+    this.modal.style.display = 'none';
+
+    this.playButton.removeEventListener('click', this.onStopButtonClick);
+    this.playButton.removeEventListener('mouseenter', this.onStopButtonMouseEnter);
+    this.playButton.removeEventListener('mouseleave', this.onStopButtonMouseLeave);
+    this.playButton.addEventListener('click', this.onPlayButtonClick);
+    this.playButton.addEventListener('mouseenter', this.onPlayButtonMouseEnter);
+    this.playButton.addEventListener('mouseleave', this.onPlayButtonMouseLeave);
+
+    this.playImage.alt = 'Play';
+    this.playImage.title = 'Play the plant\'s song';
+    this.playImage.src = './images/play-light.svg';
+
+    GameManager.stopPlayer();
+  }
+
+  private onStopButtonMouseEnter(): void {
+    this.playImage.src = './images/stop-dark.svg';
+  }
+
+  private onStopButtonMouseLeave(): void {
+    this.playImage.src = './images/stop-light.svg';
+  }
+
+  private async playSequence(): Promise<void> {
+    if (this.plant !== undefined) {
+      await GameManager.playSequence(this.plant.sequence);
+
+      this.playButton.removeEventListener('click', this.onStopButtonClick);
+      this.playButton.removeEventListener('mouseenter', this.onStopButtonMouseEnter);
+      this.playButton.removeEventListener('mouseleave', this.onStopButtonMouseLeave);
+      this.playButton.addEventListener('click', this.onPlayButtonClick);
+      this.playButton.addEventListener('mouseenter', this.onPlayButtonMouseEnter);
+      this.playButton.addEventListener('mouseleave', this.onPlayButtonMouseLeave);
+
+      this.playImage.alt = 'Play';
+      this.playImage.title = 'Play the plant\'s song';
+      this.playImage.src = './images/play-light.svg';
+    }
   }
 }

@@ -1,3 +1,6 @@
+import { SoundFontPlayer, INoteSequence } from '@magenta/music/es6';
+import Settings from './Settings';
+
 /**
  * Inspiration taken from this stack overflow post: https://stackoverflow.com/a/49434653
  * @param min The minimum possible value that could be returned

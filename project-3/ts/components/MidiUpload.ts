@@ -1,10 +1,13 @@
-import { sequences, midiToSequenceProto } from '@magenta/music/es6'; 
+import { sequences, midiToSequenceProto, MusicVAE, INoteSequence } from '@magenta/music/es6'; 
 import GameManager from '../GameManager';
 import Plant from '../Plant';
+import Settings from '../Settings';
 import Component from './Component';
 import Parent from './Parent';
 
 export default class MidiUpload extends Component {
+  private settings: Settings;
+
   private parent: Parent;
   private fileReader: FileReader;
   private fileInput: HTMLInputElement;
@@ -14,6 +17,8 @@ export default class MidiUpload extends Component {
     super();
 
     this.parent = parent;
+
+    this.settings = Settings.getInstance();
 
     // bind event listeners
     this.onFileReaderLoad = this.onFileReaderLoad.bind(this);
@@ -59,20 +64,27 @@ export default class MidiUpload extends Component {
     this.element.appendChild(this.interactionArea);
   }
 
-  onFileReaderLoad(): void {
-    if (this.fileReader.result instanceof ArrayBuffer) {
-      const plant = new Plant(sequences.quantizeNoteSequence(
-        midiToSequenceProto(this.fileReader.result),
-        2,
-      ));
+  private async createPlant(sequence: INoteSequence): Promise<void> {
+      const mvae = new MusicVAE(this.settings.generator.checkPointUrl);
+      await mvae.initialize();
+      const mvaedSequence = (await mvae.decode(await mvae.encode([sequence])))[0];
+      const plant = new Plant(mvaedSequence);
       GameManager.addPlant(plant);
       if (this.parent.plant === undefined) {
         this.parent.setPlant(plant);
       }
+  }
+
+  private onFileReaderLoad(): void {
+    if (this.fileReader.result instanceof ArrayBuffer) {
+      this.createPlant(sequences.quantizeNoteSequence(
+        midiToSequenceProto(this.fileReader.result),
+        2,
+      ));
     }
   }
 
-  onFileInputChange(): void {
+  private onFileInputChange(): void {
     if (this.fileInput.files === null || this.fileInput.files === undefined) {
       return;
     }
@@ -81,16 +93,16 @@ export default class MidiUpload extends Component {
     }
   }
 
-  onInteractionAreaClick(): void {
+  private onInteractionAreaClick(): void {
     this.fileInput.click();
   }
 
-  onInteractionAreaDrag(e: DragEvent): void {
+  private onInteractionAreaDrag(e: DragEvent): void {
     e.stopPropagation();
     e.preventDefault();
   }
 
-  onInteractionAreaDrop(e: DragEvent): void {
+  private onInteractionAreaDrop(e: DragEvent): void {
     e.stopPropagation();
     e.preventDefault();
 
@@ -104,11 +116,11 @@ export default class MidiUpload extends Component {
     }
   }
 
-  onInteractionAreaMouseEnter(): void {
+  private onInteractionAreaMouseEnter(): void {
     this.interactionArea.src = './images/plus-dark.svg';
   }
 
-  onInteractionAreaMouseLeave(): void {
+  private onInteractionAreaMouseLeave(): void {
     this.interactionArea.src = './images/plus-light.svg';
   }
 }
