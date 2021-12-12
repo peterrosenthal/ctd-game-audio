@@ -8,6 +8,7 @@ import Plant from '../Plant';
 import { delay } from '../utils';
 import MidiUpload from './MidiUpload';
 import Combinator from './Combinator';
+import InventoryItem from './InventoryItem';
 
 export default class Parent extends Component {
   private settings: Settings;
@@ -18,7 +19,8 @@ export default class Parent extends Component {
   private inventoryImage: HTMLImageElement;
   private playButton: HTMLButtonElement;
   private playImage: HTMLImageElement;
-  private modal: HTMLDivElement;
+  private inventory: HTMLDivElement;
+  private inventoryItems: InventoryItem[];
 
   private scene?: Scene;
   private camera?: PerspectiveCamera;
@@ -31,6 +33,15 @@ export default class Parent extends Component {
     super();
 
     this.combinator = combinator;
+
+    // initialize the inventory items array 
+    this.inventoryItems = [];
+    const plants = GameManager.getPlants();
+    for (let plant of plants) {
+      const item = new InventoryItem(this);
+      item.setPlant(plant);
+      this.inventoryItems.push(item);
+    }
 
     // get Settings instance
     this.settings = Settings.getInstance();
@@ -108,25 +119,25 @@ export default class Parent extends Component {
     this.playImage.src = './images/play-light.svg';
     this.playButton.appendChild(this.playImage);
 
-    // create the modal element
-    this.modal = document.createElement('div');
-    this.modal.style.display = 'flex';
-    this.modal.style.flexFlow = 'row';
-    this.modal.style.alignItems = 'center';
-    this.modal.style.justifyContent = 'center safe';
-    this.modal.style.position = 'absolute';
-    this.modal.style.top = '0';
-    this.modal.style.zIndex = '2';
-    this.modal.style.width = '80%';
-    this.modal.style.height = '72.5%';
-    this.modal.style.margin = '10%';
-    this.modal.style.background = '#f0f0ef';
-    this.modal.style.borderRadius = '0.2em';
-    this.element.appendChild(this.modal);
+    // create the modal inventory
+    this.inventory = document.createElement('div');
+    this.inventory.style.display = 'flex';
+    this.inventory.style.flexFlow = 'row wrap';
+    this.inventory.style.alignItems = 'center';
+    this.inventory.style.justifyContent = 'space-around';
+    this.inventory.style.position = 'absolute';
+    this.inventory.style.top = '0';
+    this.inventory.style.zIndex = '2';
+    this.inventory.style.width = '95%';
+    this.inventory.style.height = '85%';
+    this.inventory.style.margin = '2.5%';
+    this.inventory.style.background = '#f0f0ef';
+    this.inventory.style.borderRadius = '0.2em';
+    this.element.appendChild(this.inventory);
 
     // init the midiupload component
     const midiUpload = new MidiUpload(this);
-    midiUpload.initComponentToParent(this.modal);
+    midiUpload.initComponentToParent(this.inventory);
   }
   
   override componentHasInitialized(): void {
@@ -166,7 +177,7 @@ export default class Parent extends Component {
     if (this.buttons.childElementCount < 2) {
       this.buttons.appendChild(this.playButton);
     }
-    if (this.modal.style.display !== 'none') {
+    if (this.inventory.style.display !== 'none') {
       this.inventoryButton.click();
     }
     this.plant?.removeFromScene();
@@ -174,8 +185,8 @@ export default class Parent extends Component {
     if (this.scene !== undefined) {
       this.plant.addToScene(this.scene);
     }
-    if (this.modal.style.display !== 'none') {
-      this.modal.style.display = 'none';
+    if (this.inventory.style.display !== 'none') {
+      this.inventory.style.display = 'none';
     }
   }
 
@@ -206,7 +217,20 @@ export default class Parent extends Component {
   }
 
   private onOpenInventoryButtonClick(): void {
-    this.modal.style.display = 'flex';
+    const plants = GameManager.getPlants();
+    while (this.inventoryItems.length > plants.length) {
+      this.inventoryItems.pop()?.removeComponent();
+    }
+    for (let i = 0; i < plants.length; i++) {
+      const item = i < this.inventoryItems.length ? this.inventoryItems[i] : new InventoryItem(this);
+      item.initComponentToParent(this.inventory);
+      item.setPlant(plants[i]);
+      if (i >= this.inventoryItems.length) {
+        this.inventoryItems.push(item);
+      }
+    }
+
+    this.inventory.style.display = 'flex';
 
     this.inventoryButton.removeEventListener('click', this.onOpenInventoryButtonClick);
     this.inventoryButton.removeEventListener('mouseenter', this.onOpenInventoryButtonMouseEnter);
@@ -229,7 +253,17 @@ export default class Parent extends Component {
   }
 
   private onCloseInventoryButtonClick(): void {
-    this.modal.style.display = 'none';
+    for (let item of this.inventoryItems) {
+      item.removeComponent();
+    }
+    if (this.combinator.parentA.plant !== undefined) {
+      this.combinator.parentA.setPlant(this.combinator.parentA.plant);
+    }
+    if (this.combinator.parentB.plant !== undefined) {
+      this.combinator.parentB.setPlant(this.combinator.parentB.plant);
+    }
+
+    this.inventory.style.display = 'none';
 
     this.inventoryButton.removeEventListener('click', this.onCloseInventoryButtonClick);
     this.inventoryButton.removeEventListener('mouseenter', this.onCloseInventoryButtonMouseEnter);
@@ -252,7 +286,7 @@ export default class Parent extends Component {
   }
 
   private onPlayButtonClick(): void {
-    this.modal.style.display = 'none';
+    this.inventory.style.display = 'none';
 
     this.playButton.removeEventListener('click', this.onPlayButtonClick);
     this.playButton.removeEventListener('mouseenter', this.onPlayButtonMouseEnter);
@@ -277,7 +311,7 @@ export default class Parent extends Component {
   }
 
   private onStopButtonClick(): void {
-    this.modal.style.display = 'none';
+    this.inventory.style.display = 'none';
 
     this.playButton.removeEventListener('click', this.onStopButtonClick);
     this.playButton.removeEventListener('mouseenter', this.onStopButtonMouseEnter);

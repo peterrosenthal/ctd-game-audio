@@ -36,7 +36,7 @@ export default class MidiUpload extends Component {
     // create the component container element
     this.element = document.createElement('div');
     this.element.style.width = '100%';
-    this.element.style.height = '100%';
+    this.element.style.minWidth = '4em';
     this.element.style.display = 'flex';
     this.element.style.flexFlow = 'row';
     this.element.style.alignItems = 'center';
@@ -70,12 +70,10 @@ export default class MidiUpload extends Component {
       const mvaedSequence = (await mvae.decode(await mvae.encode([sequence])))[0];
       const plant = new Plant(mvaedSequence);
       GameManager.addPlant(plant);
-      if (this.parent.plant === undefined) {
-        this.parent.setPlant(plant);
-        if (this.parent.combinator.parentA.plant !== undefined
-         && this.parent.combinator.parentB.plant !== undefined) {
-          this.parent.combinator.activateCombineButton();
-        }
+      this.parent.setPlant(plant);
+      if (this.parent.combinator.parentA.plant !== undefined
+       && this.parent.combinator.parentB.plant !== undefined) {
+        this.parent.combinator.activateCombineButton();
       }
   }
 
@@ -86,6 +84,13 @@ export default class MidiUpload extends Component {
         2,
       ));
     }
+    if (this.element === undefined) {
+      return;
+    }
+    this.element.style.width = '25%';
+    this.element.style.minWidth = '3em';
+    this.element.style.maxWidth = '7em';
+    this.element.style.flexBasis = '1';
   }
 
   private onFileInputChange(): void {

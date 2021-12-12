@@ -191,6 +191,10 @@ export default class Child extends Component {
   }
 
   private onSaveButtonClick(): void {
+    if (this.plant === undefined) {
+      return;
+    }
+    GameManager.addPlant(this.plant);
   }
 
   private onSaveButtonMouseEnter(): void {
