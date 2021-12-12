@@ -72,6 +72,10 @@ export default class MidiUpload extends Component {
       GameManager.addPlant(plant);
       if (this.parent.plant === undefined) {
         this.parent.setPlant(plant);
+        if (this.parent.combinator.parentA.plant !== undefined
+         && this.parent.combinator.parentB.plant !== undefined) {
+          this.parent.combinator.activateCombineButton();
+        }
       }
   }
 

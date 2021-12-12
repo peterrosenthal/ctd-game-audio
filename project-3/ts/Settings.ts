@@ -17,7 +17,7 @@ export default class Settings {
 
   generator = {
     checkPointUrl: 'https://storage.googleapis.com/magentadata/js/checkpoints/music_vae/mel_2bar_small',
-    numChildren: 1,
+    numChildren: 10,
     parentSimilaritySkew: 0.3,
     parentSimilarityTemperature: 1.0,
     interpolationResolutuion: 100,

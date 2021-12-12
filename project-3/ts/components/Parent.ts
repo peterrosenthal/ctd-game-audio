@@ -7,7 +7,7 @@ import Component from './Component';
 import Plant from '../Plant';
 import { delay } from '../utils';
 import MidiUpload from './MidiUpload';
-import { INoteSequence } from '@magenta/music/es6';
+import Combinator from './Combinator';
 
 export default class Parent extends Component {
   private settings: Settings;
@@ -24,15 +24,18 @@ export default class Parent extends Component {
   private camera?: PerspectiveCamera;
   private renderer?: WebGLRenderer;
 
+  combinator: Combinator;
   plant?: Plant;
 
-  constructor() {
+  constructor(combinator: Combinator) {
     super();
+
+    this.combinator = combinator;
 
     // get Settings instance
     this.settings = Settings.getInstance();
 
-    // bind event listeners
+    // bind animate and event listeners
     this.animate = this.animate.bind(this);
     this.onWindowResize = this.onWindowResize.bind(this);
     this.onOpenInventoryButtonClick = this.onOpenInventoryButtonClick.bind(this);
@@ -65,7 +68,9 @@ export default class Parent extends Component {
     this.canvas.style.width = '100%';
     this.canvas.style.height = '100%';
     this.canvas.style.margin = '0';
+    this.canvas.style.border = '1px solid #8ab1b4';
     this.canvas.style.borderRadius = '0.2em';
+    this.element.appendChild(this.canvas);
 
     // create the buttons bar
     this.buttons = document.createElement('div');
@@ -84,7 +89,6 @@ export default class Parent extends Component {
     this.inventoryButton.addEventListener('mouseenter', this.onCloseInventoryButtonMouseEnter);
     this.inventoryButton.addEventListener('mouseleave', this.onCloseInventoryButtonMouseLeave);
     this.buttons.appendChild(this.inventoryButton);
-    
     this.inventoryImage = document.createElement('img');
     this.inventoryImage.alt = 'Close inventory';
     this.inventoryImage.title = 'Close plant inventory';
@@ -98,7 +102,6 @@ export default class Parent extends Component {
     this.playButton.addEventListener('click', this.onPlayButtonClick);
     this.playButton.addEventListener('mouseenter', this.onPlayButtonMouseEnter);
     this.playButton.addEventListener('mouseleave', this.onPlayButtonMouseLeave);
-
     this.playImage = document.createElement('img');
     this.playImage.alt = 'Play';
     this.playImage.title = 'Play the plant\'s song';
@@ -112,10 +115,11 @@ export default class Parent extends Component {
     this.modal.style.alignItems = 'center';
     this.modal.style.justifyContent = 'center safe';
     this.modal.style.position = 'absolute';
+    this.modal.style.top = '0';
     this.modal.style.zIndex = '2';
     this.modal.style.width = '80%';
-    this.modal.style.height = '78%';
-    this.modal.style.margin = '10% 10% 12%';
+    this.modal.style.height = '72.5%';
+    this.modal.style.margin = '10%';
     this.modal.style.background = '#f0f0ef';
     this.modal.style.borderRadius = '0.2em';
     this.element.appendChild(this.modal);
@@ -147,7 +151,6 @@ export default class Parent extends Component {
     this.renderer = new WebGLRenderer({ canvas: this.canvas, });
     if (this.element !== undefined) {
       this.renderer.setSize(this.canvas.width, this.canvas.width);
-      this.element.appendChild(this.renderer.domElement);
       this.resizeCanvasDelay();
     }
 
@@ -166,9 +169,7 @@ export default class Parent extends Component {
     if (this.modal.style.display !== 'none') {
       this.inventoryButton.click();
     }
-    if (this.plant !== undefined) {
-      this.plant.removeFromScene();
-    }
+    this.plant?.removeFromScene();
     this.plant = plant;
     if (this.scene !== undefined) {
       this.plant.addToScene(this.scene);
@@ -195,12 +196,12 @@ export default class Parent extends Component {
     } 
   }
 
-  private onWindowResize(): void {
+  private async resizeCanvasDelay(): Promise<void> {
+    await delay(3);
     this.resizeCanvas();
   }
 
-  private async resizeCanvasDelay(): Promise<void> {
-    await delay(3);
+  private onWindowResize(): void {
     this.resizeCanvas();
   }
 

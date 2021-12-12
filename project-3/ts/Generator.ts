@@ -52,7 +52,9 @@ export default class Generator {
         parents,
         this.interpolationResolution,
       );
-      children.push(new Plant(results[Math.floor(getSkewedRandom(0, results.length, 1))]));
+      children.push(new Plant(
+        results[Math.floor(getSkewedRandom(0, results.length, 1))]
+      ));
     }
     return children;
   }
