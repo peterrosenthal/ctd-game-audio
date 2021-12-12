@@ -1,5 +1,5 @@
 import Plant from '../Plant';
-import Settings from '../Settings';
+import Settings from './Settings';
 import Child from './Child';
 import Component from './Component';
 

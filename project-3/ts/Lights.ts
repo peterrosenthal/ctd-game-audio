@@ -1,6 +1,5 @@
 import { Scene, DirectionalLight, AmbientLight } from 'three';
-import GameManager from './GameManager';
-import Settings from './Settings';
+import Settings from './components/Settings';
 
 /**
  * Handles all the lights and adding them to the scene and whatnot.

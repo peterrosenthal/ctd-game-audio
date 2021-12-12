@@ -1,5 +1,5 @@
 import { SoundFontPlayer, INoteSequence } from '@magenta/music/es6';
-import Settings from './Settings';
+import Settings from './components/Settings';
 
 /**
  * Inspiration taken from this stack overflow post: https://stackoverflow.com/a/49434653

@@ -1,7 +1,7 @@
 import { sequences, midiToSequenceProto, MusicVAE, INoteSequence } from '@magenta/music/es6'; 
 import GameManager from '../GameManager';
 import Plant from '../Plant';
-import Settings from '../Settings';
+import Settings from './Settings';
 import Component from './Component';
 import Parent from './Parent';
 
@@ -65,7 +65,7 @@ export default class MidiUpload extends Component {
   }
 
   private async createPlant(sequence: INoteSequence): Promise<void> {
-      const mvae = new MusicVAE(this.settings.generator.checkPointUrl);
+      const mvae = new MusicVAE(this.settings.generator.checkpointUrl);
       await mvae.initialize();
       const mvaedSequence = (await mvae.decode(await mvae.encode([sequence])))[0];
       const plant = new Plant(mvaedSequence);

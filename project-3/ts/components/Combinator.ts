@@ -88,7 +88,6 @@ export default class Combinator extends Component {
   }
 
   private onCombineButtonClick(): void {
-    console.log('generating!');
     this.generate();  
   }
 

@@ -1,5 +1,5 @@
 import { INoteSequence, MusicVAE } from '@magenta/music/es6';
-import Settings from './Settings';
+import Settings from './components/Settings';
 import Plant from './Plant';
 import { getSkewedRandom } from './utils';
 
@@ -22,7 +22,7 @@ export default class Generator {
   constructor() {
     this.settings = Settings.getInstance();
 
-    this.checkpointUrl = this.settings.generator.checkPointUrl;
+    this.checkpointUrl = this.settings.generator.checkpointUrl;
     this.mvae = new MusicVAE(this.checkpointUrl);
     this.numChildren = this.settings.generator.numChildren;
     this.parentSimilaritySkew = this.settings.generator.parentSimilaritySkew;
@@ -60,8 +60,8 @@ export default class Generator {
   }
 
   private checkSettingsForUpdates() {
-    if (this.checkpointUrl != this.settings.generator.checkPointUrl) {
-      this.checkpointUrl = this.settings.generator.checkPointUrl;
+    if (this.checkpointUrl != this.settings.generator.checkpointUrl) {
+      this.checkpointUrl = this.settings.generator.checkpointUrl;
       this.mvae = new MusicVAE(this.checkpointUrl);
     }
     if (this.numChildren != this.settings.generator.numChildren) {

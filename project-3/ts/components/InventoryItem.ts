@@ -3,7 +3,7 @@ import Component from './Component';
 import Lights from '../Lights';
 import Parent from './Parent';
 import Plant from '../Plant';
-import Settings from '../Settings';
+import Settings from './Settings';
 import Skybox from '../Skybox';
 import { delay } from '../utils';
 

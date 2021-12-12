@@ -1,6 +1,6 @@
 import { Scene, Object3D, Mesh, MeshPhysicalMaterial, CylinderGeometry, Color, DoubleSide, Vector3 } from 'three';
 import { INoteSequence, MusicVAE } from '@magenta/music/es6';
-import Settings from './Settings';
+import Settings from './components/Settings';
 import { rampUpDownMod } from './utils';
 
 /**
@@ -8,8 +8,6 @@ import { rampUpDownMod } from './utils';
  */
 export default class Plant {
   private settings: Settings;
-
-  private mvae: MusicVAE;
 
   sequence: INoteSequence;
   object: Object3D;
@@ -20,8 +18,6 @@ export default class Plant {
     this.sequence = sequence;
 
     this.object = new Object3D();
-
-    this.mvae = new MusicVAE(this.settings.generator.checkPointUrl);
 
     this.generate();
   }
@@ -39,9 +35,10 @@ export default class Plant {
   }
 
   async generate(): Promise<void> {
-    await this.mvae.initialize();
+    const mvae = new MusicVAE(this.settings.generator.checkpointUrl);
+    await mvae.initialize();
     const data = this.reduceDimensions(
-      await (await this.mvae.encode([this.sequence])).data(),
+      await (await mvae.encode([this.sequence])).data(),
       64,
     );
 

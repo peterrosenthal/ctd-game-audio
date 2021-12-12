@@ -2,7 +2,7 @@ import { INoteSequence, SoundFontPlayer } from '@magenta/music/es6';
 import { delay } from './utils';
 import Plant from './Plant';
 import Combinator from './components/Combinator';
-import Settings from './Settings';
+import Settings from './components/Settings';
 
 /**
  * The GameManager is the main 'app' that houses all the essentials
@@ -36,6 +36,7 @@ export default class GameManager {
     if (this.settings === undefined) {
       this.settings = Settings.getInstance();
     }
+    console.log(this.settings.player.url);
     if (this.url === undefined) {
       this.url = this.settings.player.url;
     }
@@ -61,6 +62,10 @@ export default class GameManager {
   }
 
   constructor() {
+    // add the settings component to the dom
+    const settings = Settings.getInstance();
+    settings.initComponentToParent(document.body);
+
     // add the combinator component to the dom
     const combinator = new Combinator();
     combinator.initComponentToParent(document.body);

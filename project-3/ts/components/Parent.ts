@@ -1,7 +1,7 @@
 import { PerspectiveCamera, Scene, WebGLRenderer } from 'three';
 import GameManager from '../GameManager';
 import Lights from '../Lights';
-import Settings from '../Settings';
+import Settings from './Settings';
 import Skybox from '../Skybox';
 import Component from './Component';
 import Plant from '../Plant';
@@ -127,7 +127,7 @@ export default class Parent extends Component {
     this.inventory.style.justifyContent = 'space-around';
     this.inventory.style.position = 'absolute';
     this.inventory.style.top = '0';
-    this.inventory.style.zIndex = '2';
+    this.inventory.style.zIndex = '150';
     this.inventory.style.width = '95%';
     this.inventory.style.height = '85%';
     this.inventory.style.margin = '2.5%';
